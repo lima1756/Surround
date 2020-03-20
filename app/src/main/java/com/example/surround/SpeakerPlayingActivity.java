@@ -14,9 +14,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.surround.Utils.MyEqualizer;
+
 import java.io.IOException;
 
 public class SpeakerPlayingActivity extends AppCompatActivity {
+
 
     //TODO THREADS ON PLAY, ON PLAY MILISECONDS, TO GET SYNC.
     public static final int ERR_NOT_ABLE_PREPARE_SONG = 2;
@@ -30,6 +33,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     String currentSongUrl;
     // hash number music  ?
     String artistSong, nameSong;
+    int typeOfSpeaker;
     //...............................
 
     ImageView ivStopBtn, ivDisk;
@@ -39,6 +43,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     long lastTimestamp ;
     int lastMillis;
 
+    MyEqualizer myEq;
     View.OnClickListener onStopBtn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -69,6 +74,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         setSongMetadata("Massive Attack", "Inertia Creeps");//TODO FROM SOCKETS
         isPlaying = false;
         isReady = false;
+        typeOfSpeaker=0;
         tests();
 
 
@@ -107,6 +113,11 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     }
 
     //SOCKETS-LISTENERS -----------------------------------
+    public void onStartConnection(int typeOfSpeaker){
+        this.typeOfSpeaker = typeOfSpeaker;
+        myEq = new MyEqualizer(null,this.typeOfSpeaker);
+    }
+
     public void onStopSong(){
         if(mp != null){
             mp.stop(); //TODO decidir si podremos volvernos a conectar al server a media canción o no.
@@ -115,7 +126,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         isPlaying = false;
     }
 
-
+    //TODO SET EQ
+    //TODO SET SPK TYPE
+    //SET ON EQ MEDIA PLAYER.
 
     public void onGetMusic(String url){
         Log.d("SPEAKER_PLAY", "on get m Is playing: "+ isPlaying + "is ready "+ isReady);
@@ -125,7 +138,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         if(isReady && currentSongUrl.equals(url)) return;
         isReady = false;
         currentSongUrl = url;
+
+
         mp = new MediaPlayer();
+
+        if(myEq==null){
+            myEq = new MyEqualizer(mp,typeOfSpeaker);
+
+        }else{
+            myEq.setMp(mp);
+        }
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mp.setOnPreparedListener(readyToPlay);
         try{
@@ -167,6 +189,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 if(SpeakerPlayingActivity.this.lastTimestamp <= now ){
                     mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
                     mp.start();
+                    myEq.getEq().setEnabled(true);
                     done = true;
                 }
                 try {
