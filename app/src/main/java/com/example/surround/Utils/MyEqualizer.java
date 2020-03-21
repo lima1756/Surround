@@ -8,14 +8,7 @@ import android.util.Log;
 
 public class MyEqualizer {
 
-    public static final int SUBWOOFER =3;
-    public static final int CENTER=2;
-    public static final int FRONT_LEFT=0;
-    public static final int LEFT=4;
-    public static final int BACK_LEFT =6;
-    public static final int FRONT_RIGHT =1;
-    public static final int  RIGHT=5;
-    public static final int BACK_RIGHT=7;
+
 
     int[][] eqModes = { {-100,400,700,1200,800},//FRONT L
             {-100,400,700,1200,800},//FRONT R

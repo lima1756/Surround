@@ -8,4 +8,6 @@
     <string name="et_speaker_hint">Token</string>
     <string name="controller_instrucctions">TODO</string>
     <string name="lorem_short">Lorem Ipsum</string>
+    <string name="login_speaker">Insert your session number</string>
+
 </resources>

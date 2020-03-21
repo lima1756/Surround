@@ -11,16 +11,15 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@android:color/white"
         android:textSize="42sp"
-        app:layout_constraintBottom_toTopOf="@+id/iv_controller"
+        app:layout_constraintBottom_toTopOf="@+id/tv_controller"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
     <ImageView
         android:id="@+id/iv_speaker"
@@ -28,22 +27,22 @@
         android:layout_height="120dp"
         android:background="@drawable/speaker_icon_svg"
         android:backgroundTint="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_des_speaker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_speaker"
-        app:layout_constraintTop_toBottomOf="@+id/iv_controller" />
+        app:layout_constraintTop_toTopOf="@+id/tv_speaker" />
 
     <TextView
         android:id="@+id/tv_des_speaker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:textColor="#CCFFFFFF"
         android:textSize="24sp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_speaker"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_speaker"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tv_speaker"
         app:layout_constraintTop_toBottomOf="@+id/tv_speaker"
         tools:text="@string/speaker_description" />
@@ -52,6 +51,7 @@
         android:id="@+id/tv_speaker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/speaker"
         android:textColor="@android:color/white"
         android:textSize="36sp"
@@ -60,19 +60,19 @@
         app:layout_constraintEnd_toStartOf="@+id/iv_speaker"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_speaker" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_des_cont" />
 
     <TextView
         android:id="@+id/tv_des_cont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="@string/controller_description"
         android:textColor="#CCFFFFFF"
         android:textSize="24sp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_controller"
+        app:layout_constraintBottom_toTopOf="@+id/tv_speaker"
         app:layout_constraintEnd_toEndOf="@+id/tv_controller"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tv_controller"
         app:layout_constraintTop_toBottomOf="@+id/tv_controller" />
 
@@ -88,7 +88,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/iv_controller"
-        app:layout_constraintTop_toTopOf="@+id/iv_controller" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <ImageView
         android:id="@+id/iv_controller"
@@ -98,11 +98,25 @@
         android:backgroundTintMode="multiply"
         android:foregroundTint="#FFFFFF"
         android:tint="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/iv_speaker"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_des_cont"
         app:layout_constraintEnd_toStartOf="@+id/tv_controller"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/tv_controller"
         app:srcCompat="@drawable/remote" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#FFFFFF"
+        android:foregroundTint="#FFFFFFFF"
+        android:tint="#FFFFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/sol" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
