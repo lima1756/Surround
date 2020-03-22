@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.16.x"
+  },
   "scripts": {
     "build": "tsc --sourceMap false",
     "start:dev": "nodemon --config \"./util/nodemon.json\"/",
     "start": "npm run build && node ./build/start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lima1756/Surround.git"
+  },
+  "author": "Ivan Morett",
   "license": "ISC",
   "dependencies": {
     "@types/express-fileupload": "^1.1.2",
