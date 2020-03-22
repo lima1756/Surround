@@ -1,5 +1,5 @@
 import UserKind from '../constants/UserKind';
-import UserStatus from 'src/constants/UserStatus';
+import UserStatus from '../constants/UserStatus';
 
 class User {
     private id: string;

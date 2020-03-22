@@ -1,12 +1,12 @@
 import {Logger} from '@overnightjs/logger';
 import Room from '../../shared/Room';
 import User from '../../shared/User'
-import UserKind from 'src/constants/UserKind';
-import UserStatus from 'src/constants/UserStatus';
-import SpeakerSocket from 'src/constants/SpeakerSocket';
-import ControllerSocket from 'src/constants/ControllerSocket';
-import { SpeakerLoginRequest } from 'src/types/Speaker.types';
-import { ControllerConfigurationRequest, ControllerPlayRequest } from 'src/types/Controller.types';
+import UserKind from '../../constants/UserKind';
+import UserStatus from '../../constants/UserStatus';
+import SpeakerSocket from '../../constants/SpeakerSocket';
+import ControllerSocket from '../../constants/ControllerSocket';
+import { SpeakerLoginRequest } from '../../types/Speaker.types';
+import { ControllerConfigurationRequest, ControllerPlayRequest } from '../../types/Controller.types';
 
 
 class SocketIOController {

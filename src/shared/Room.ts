@@ -1,8 +1,7 @@
 import User from "./User";
-import RoomStatus from 'src/constants/RoomStatus';
-import UserStatus from 'src/constants/UserStatus';
-import SpeakerSocket from 'src/constants/SpeakerSocket';
-import SpeakerParams from 'src/constants/SpeakerParams';
+import RoomStatus from '../constants/RoomStatus';
+import UserStatus from '../constants/UserStatus';
+import SpeakerSocket from '../constants/SpeakerSocket';
 import { Disconnect } from '../types/Shared.types';
 
 class Room{
