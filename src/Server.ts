@@ -10,14 +10,11 @@ import * as cors from 'cors';
 import * as http from 'http';
 import fileUpload = require('express-fileupload');
 
-interface ProcessEnv {
-    [key: string]: string | undefined
-}
 
 class SorroundServer extends Server {
 
     private port: number | string;
-    private static readonly PORT: number = 3001;
+    private static readonly DEV_PORT: number = 3001;
     private static readonly SERVER_START_MSG: string = 'Server started on port: ';
     private static readonly DEV_MSG: string = 'Express Server is running in development mode. ' + 
         'No front-end content is being served.';
@@ -37,7 +34,7 @@ class SorroundServer extends Server {
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(express.static(SorroundServer.PATH));
         this.app.use(fileUpload())
-        this.port = process.env.PORT || SorroundServer.PORT;
+        this.port = process.env.PORT || SorroundServer.DEV_PORT;
         
         this.setupControllers();
         if (process.env.NODE_ENV !== 'production'){
