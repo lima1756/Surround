@@ -1,0 +1,19 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+      "max-line-length": {
+        "options": [100]
+      },
+      "member-ordering": false,
+      "no-consecutive-blank-lines": true,
+      "object-literal-sort-keys": false,
+      "ordered-imports": true,
+      "quotemark": [true, "single"],
+      "variable-name": [true, "allow-leading-underscore"]
+    },
+    "linterOptions": {
+      "exclude": [
+        "./node_modules/**"
+      ]
+    }
+  }
