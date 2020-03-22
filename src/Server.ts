@@ -17,7 +17,7 @@ interface ProcessEnv {
 class SorroundServer extends Server {
 
     private port: number | string;
-    private static readonly PORT: number = |3001;
+    private static readonly PORT: number = 3001;
     private static readonly SERVER_START_MSG: string = 'Server started on port: ';
     private static readonly DEV_MSG: string = 'Express Server is running in development mode. ' + 
         'No front-end content is being served.';
