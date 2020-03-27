@@ -42,7 +42,7 @@ class SocketIOController {
             socket.on(SpeakerSocket.READY, () => {
                 user.setStatus(UserStatus.READY);
                 const room = this.rooms[user.getRoomID()];
-                if(room.speakersReady()){
+                if(room && room.speakersReady()){
                     room.playSpeakers();
                 }
             });
