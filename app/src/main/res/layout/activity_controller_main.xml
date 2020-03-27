@@ -8,4 +8,24 @@
     android:background="#FF252525"
     tools:context=".ControllerMainActivity">
 
+    <FrameLayout
+        android:id="@+id/controller_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" >
+
+        <fragment
+            android:id="@+id/controllerFrag"
+            android:name="com.example.surround.ControllerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <fragment
+            android:id="@+id/songFrag"
+            android:name="com.example.surround.SongFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
