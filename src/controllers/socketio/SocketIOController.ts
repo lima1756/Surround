@@ -1,12 +1,14 @@
 import {Logger} from '@overnightjs/logger';
 import Room from '../../shared/Room';
 import User from '../../shared/User'
-import UserKind from '../../constants/UserKind';
-import UserStatus from '../../constants/UserStatus';
-import SpeakerSocket from '../../constants/SpeakerSocket';
-import ControllerSocket from '../../constants/ControllerSocket';
-import { SpeakerLoginRequest } from '../../types/Speaker.types';
-import { ControllerConfigurationRequest, ControllerPlayRequest } from '../../types/Controller.types';
+import UserKind from '../../constants/UserKind.enum';
+import UserStatus from '../../constants/UserStatus.enum';
+import SpeakerSignals from '../../constants/SpeakerSignals.enum';
+import ControllerSignals from '../../constants/ControllerSignals.enum';
+import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal } from '../../types/Speaker.types';
+import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest } from '../../types/Controller.types';
+import { ErrorResponse, OkResponse } from 'src/types/Shared.types';
+import { Socket } from 'src/types/Socket.type';
 
 
 class SocketIOController {
@@ -21,25 +23,26 @@ class SocketIOController {
     }
 
     public socketEvents() {
-        this.io.on('connection', (socket) => {
+        this.io.on('connection', (socket: Socket) => {
             Logger.Info("new connection");
             let user = new User(socket);
+            
 
             // Speaker listeners
-            socket.on(SpeakerSocket.LOGIN, (data: SpeakerLoginRequest) => {
+            socket.on(SpeakerSignals.LOGIN, (data: SpeakerLoginRequest) => {
                 if(this.rooms[data.room]) {
                     user.setName(data.name);
                     user.setKind(UserKind.SPEAKER)
                     user.setRoomID(data.room);
                     this.rooms[data.room].addSpeaker(user);
-                    socket.emit("login", {"typeOfSpeaker": 2});
+                    socket.emit<SpeakerLoginResponse>(SpeakerSignals.LOGIN_RESPONSE, {"type_speaker": 2});
                 }
                 else {
-                    socket.emit("login", {"error": "Selected room doesn't exist."});
+                    socket.emit<ErrorResponse>(SpeakerSignals.LOGIN_RESPONSE, {"error": "Selected room doesn't exist."});
                 }
             });
 
-            socket.on(SpeakerSocket.READY, () => {
+            socket.on(SpeakerSignals.READY, () => {
                 user.setStatus(UserStatus.READY);
                 const room = this.rooms[user.getRoomID()];
                 if(room && room.speakersReady()){
@@ -48,7 +51,7 @@ class SocketIOController {
             });
 
             // Controller listeners
-            socket.on(ControllerSocket.LOGIN, (data) => {
+            socket.on(ControllerSignals.LOGIN, (data: ControllerLoginRequest) => {
                 let id = Room.genID();
                 while(this.rooms[id]){
                     id = Room.genID();
@@ -58,39 +61,43 @@ class SocketIOController {
                 let room = new Room(user, id);
                 user.setRoomID(id);
                 this.rooms[id] = room;
-                socket.emit("")
+                console.log("HEYY");
+                socket.emit<ControllerLoginResponse>(ControllerSignals.LOGIN_RESPONSE, {"id":user.getID(),"room":room.getID()});
             });
 
-            socket.on(ControllerSocket.CONFIGURE_SPEAKER, (data: ControllerConfigurationRequest) => {
+            socket.on(ControllerSignals.CONFIGURE_SPEAKER, (data: ControllerConfigurationRequest) => {
                 const room = this.rooms[user.getRoomID()];
                 if(!room){
-                    socket.emit(ControllerSocket.CONFIGURE_SPEAKER, {"error": "Selected room doesn't exist."});
+                    socket.emit<ErrorResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE, {"error": "Selected room doesn't exist."});
                     return;
                 }
                 const speaker = room.getSpeaker(data.speaker_id);
                 if(!speaker){
-                    socket.emit(ControllerSocket.CONFIGURE_SPEAKER, {"error": "User doesn't exist in room."});
+                    socket.emit<ErrorResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE, {"error": "User doesn't exist in room."});
                     return;
                 }
-                speaker.getSocket().emit("onSetSpeaker", {"typeOfSpeaker": data.type})
+                speaker.getSocket().emit<SpeakerSetTypeSignal>(SpeakerSignals.SET_TYPE,  {"type_speaker": data.type});
+                socket.emit<OkResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE,  {"ok":true});
             })
 
-            socket.on(ControllerSocket.STOP_MUSIC, (data: ControllerConfigurationRequest) => {
+            socket.on(ControllerSignals.STOP_MUSIC, (data: ControllerConfigurationRequest) => {
                 const room = this.rooms[user.getRoomID()];
                 if(!room){
-                    socket.emit(ControllerSocket.CONFIGURE_SPEAKER, {"error": "Selected room doesn't exist."});
+                    socket.emit(ControllerSignals.CONFIGURE_SPEAKER, {"error": "Selected room doesn't exist."});
                     return;
                 }
                 room.stopSpeakers();
+                socket.emit<OkResponse>(ControllerSignals.STOP_MUSIC_RESPONSE, {"ok": true})
             })
 
-            socket.on(ControllerSocket.PLAY_MUSIC, (data: ControllerPlayRequest) => {
+            socket.on(ControllerSignals.PLAY_MUSIC, (data: ControllerPlayRequest) => {
                 const room = this.rooms[user.getRoomID()];
                 if(!room){
-                    socket.emit(ControllerSocket.CONFIGURE_SPEAKER, {"error": "Selected room doesn't exist."});
+                    socket.emit(ControllerSignals.PLAY_MUSIC_RESPONSE, {"error": "Selected room doesn't exist."});
                     return;
                 }
                 room.prepareSpeakers(data.song_id);
+                socket.emit<OkResponse>(ControllerSignals.PLAY_MUSIC_RESPONSE, {"ok": true})
             })
 
 

@@ -1,15 +1,16 @@
-import UserKind from '../constants/UserKind';
-import UserStatus from '../constants/UserStatus';
+import UserKind from '../constants/UserKind.enum';
+import UserStatus from '../constants/UserStatus.enum';
+import { Socket } from 'src/types/Socket.type';
 
 class User {
     private id: string;
     private name: string;
     private kind: UserKind;
-    private socket: SocketIO.Socket;
+    private socket: Socket;
     private roomID: string;
     private status: UserStatus;
 
-    constructor(socket: SocketIO.Socket){
+    constructor(socket: Socket){
         this.id = Date.now().toString();
         this.socket = socket;
         this.roomID = "";
@@ -38,7 +39,7 @@ class User {
         return this.roomID;
     }
 
-    getSocket(): SocketIO.Socket{
+    getSocket(): Socket{
         return this.socket;
     }
 

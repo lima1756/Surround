@@ -1,8 +1,10 @@
 import User from "./User";
-import RoomStatus from '../constants/RoomStatus';
-import UserStatus from '../constants/UserStatus';
-import SpeakerSocket from '../constants/SpeakerSocket';
+import RoomStatus from '../constants/RoomStatus.enum';
+import UserStatus from '../constants/UserStatus.enum';
+import SpeakerSignals from '../constants/SpeakerSignals.enum';
 import { Disconnect } from '../types/Shared.types';
+import { SpeakerPlaySignal, SpeakerPrepareSignal, SpekerStopSignal } from 'src/types/Speaker.types';
+import { Logger } from '@overnightjs/logger';
 
 class Room{
     private controller: User;
@@ -26,13 +28,18 @@ class Room{
         return id;
     }
 
+    public getID(): string{
+        return this.id;
+    }
+
     public getSpeaker(id: string): User{
         return this.speakers[id];
     }
 
     public addSpeaker(speaker: User){
         if(this.speakers[speaker.getID()]){
-            throw new Error("speaker already exists");
+            Logger.Warn("Speaker already in room");
+            return;
         }
         this.speakers[speaker.getID()] = speaker;
     }
@@ -69,20 +76,20 @@ class Room{
 
     public playSpeakers() {
         for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit(SpeakerSocket.PLAY, {"timestamp": Date.now()+3000})
+            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000})
         }
     }
 
     public prepareSpeakers(song_id: string) {
         // TODO: send real data retrieved from DB
         for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit(SpeakerSocket.SET_MUSIC, {"song_id": song_id, "song_artist": "artista", "song_name":"cancion"})
+            user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song_id, "song_artist": "artista", "song_name":"cancion"})
         }
     }
 
     public stopSpeakers() {
         for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit(SpeakerSocket.STOP_SONG, {})
+            user.getSocket().emit<SpekerStopSignal>(SpeakerSignals.STOP_SONG, {"stop":true})
         }
     }
 }
