@@ -49,7 +49,7 @@ public class AppSocket extends Application {
     }
     private AppSocket(){
         try {
-            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
+            mSocket = IO.socket(Constants.SERVER_URL);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

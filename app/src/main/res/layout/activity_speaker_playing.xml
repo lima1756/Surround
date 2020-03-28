@@ -71,4 +71,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name_song" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btn_test_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start"
+        app:layout_constraintBottom_toTopOf="@+id/iv_disc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

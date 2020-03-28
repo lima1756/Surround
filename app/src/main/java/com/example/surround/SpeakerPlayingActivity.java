@@ -45,6 +45,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     //...............................
 
     ImageView ivStopBtn, ivDisk;
+    Button btnTestStart;
     MediaPlayer mp;
     TextView tvArtist, tvNameSong;
     boolean isPlaying, isReady;
@@ -53,6 +54,12 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     MyEqualizer myEq;
     AppSocket app;
+    View.OnClickListener testStart = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            tests();
+        }
+    };
     View.OnClickListener onStopBtn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -176,17 +183,24 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
         //--------------------------------------------------------
 
-        if(!app.getSocket().connected()){
+        /*if(!app.getSocket().connected()){
             app.getSocket().connect();
-        }
-        tests();
+        }*/
+        app.getSocket().connect();
+
+        //---------------------------TEST--------------------------------
+        isReady= true;
+        btnTestStart = findViewById(R.id.btn_test_start);
+        btnTestStart.setOnClickListener(testStart);
 
 
     }
 
 
     private void tests(){
-        String url = "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Checkie_Brown/hey/Checkie_Brown_-_09_-_Mary_Roose_CB_36.mp3";
+        Log.d("SPEAKER_PLAY", ""+app.getSocket().connected());
+        String url = Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + "101";
+        Log.d("SPEAKER_PLAY", url);
         onSetMusic(url);
     }
 
@@ -237,7 +251,8 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public void onSetMusic(String url){
         Log.d("SPEAKER_PLAY", "on get m Is playing: "+ isPlaying + "is ready "+ isReady);
         if(isPlaying)onStopSong();
-        if(isReady && currentSongUrl.equals(url)) return;
+        if(url==null) return;
+        if(isReady && url.equals(currentSongUrl)) return;
         isReady = false;
         currentSongUrl = url;
 
