@@ -5,7 +5,7 @@ import UserKind from '../../constants/UserKind.enum';
 import UserStatus from '../../constants/UserStatus.enum';
 import SpeakerSignals from '../../constants/SpeakerSignals.enum';
 import ControllerSignals from '../../constants/ControllerSignals.enum';
-import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal } from '../../types/Speaker.types';
+import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal, SpeakerReadyRequest } from '../../types/Speaker.types';
 import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest } from '../../types/Controller.types';
 import { ErrorResponse, OkResponse } from 'src/types/Shared.types';
 import { Socket } from 'src/types/Socket.type';
@@ -42,7 +42,7 @@ class SocketIOController {
                 }
             });
 
-            socket.on(SpeakerSignals.READY, () => {
+            socket.on(SpeakerSignals.READY, (data : SpeakerReadyRequest) => {
                 user.setStatus(UserStatus.READY);
                 const room = this.rooms[user.getRoomID()];
                 if(room && room.speakersReady()){

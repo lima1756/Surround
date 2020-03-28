@@ -3,6 +3,10 @@ export interface SpeakerLoginRequest{
     name: string,
 }
 
+export interface SpeakerReadyRequest{
+    ready: boolean
+}
+
 export interface SpeakerLoginResponse {
     type_speaker: number,
 }
