@@ -87,7 +87,7 @@ class Room{
     public playSpeakers() {
         Logger.Info("Playing music in room: " + this.id);
         for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "song_timestamp": 0})
+            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "millis_play": 0})
         }
     }
 
