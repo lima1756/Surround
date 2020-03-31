@@ -9,7 +9,7 @@ import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal, Speake
 import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest, ControllerSpeakerConnected } from '../../types/Controller.types';
 import { ErrorResponse, OkResponse } from 'src/types/Shared.types';
 import { Socket } from 'src/types/Socket.type';
-import Equalizer from 'src/constants/Equalizer.enum';
+import Equalizer from '../../constants/Equalizer.enum';
 
 
 class SocketIOController {
