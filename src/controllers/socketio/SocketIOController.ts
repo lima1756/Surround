@@ -6,9 +6,10 @@ import UserStatus from '../../constants/UserStatus.enum';
 import SpeakerSignals from '../../constants/SpeakerSignals.enum';
 import ControllerSignals from '../../constants/ControllerSignals.enum';
 import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal, SpeakerReadyRequest } from '../../types/Speaker.types';
-import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest } from '../../types/Controller.types';
+import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest, ControllerSpeakerConnected } from '../../types/Controller.types';
 import { ErrorResponse, OkResponse } from 'src/types/Shared.types';
 import { Socket } from 'src/types/Socket.type';
+import Equalizer from 'src/constants/Equalizer.enum';
 
 
 class SocketIOController {
@@ -35,7 +36,15 @@ class SocketIOController {
                     user.setKind(UserKind.SPEAKER)
                     user.setRoomID(data.room);
                     this.rooms[data.room].addSpeaker(user);
+                    Logger.Info("Speaker connecting to room");
                     socket.emit<SpeakerLoginResponse>(SpeakerSignals.LOGIN_RESPONSE, {"type_speaker": 2});
+                    this.rooms[data.room].getController().getSocket()
+                        .emit<ControllerSpeakerConnected>(ControllerSignals.CONNECTED_SPEAKER,
+                            {
+                                "name":data.name,
+                                "id":user.getID(),
+                                "type":Equalizer.CENTER_SPEAKER
+                            });
                 }
                 else {
                     socket.emit<ErrorResponse>(SpeakerSignals.LOGIN_RESPONSE, {"error": "Selected room doesn't exist."});
@@ -61,7 +70,7 @@ class SocketIOController {
                 let room = new Room(user, id);
                 user.setRoomID(id);
                 this.rooms[id] = room;
-                console.log("HEYY");
+                Logger.Info("New Room");
                 socket.emit<ControllerLoginResponse>(ControllerSignals.LOGIN_RESPONSE, {"id":user.getID(),"room":room.getID()});
             });
 

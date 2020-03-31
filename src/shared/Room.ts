@@ -32,6 +32,10 @@ class Room{
         return this.id;
     }
 
+    public getController(): User{
+        return this.controller;
+    }
+
     public getSpeaker(id: string): User{
         return this.speakers[id];
     }

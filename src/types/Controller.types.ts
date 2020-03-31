@@ -17,3 +17,9 @@ export interface ControllerLoginResponse {
     id: string;
     room: string;
 }
+
+export interface ControllerSpeakerConnected {
+    id: string,
+    name: string,
+    type: Equalizer
+}

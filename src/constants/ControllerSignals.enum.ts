@@ -9,5 +9,6 @@ enum ControllerSignals {
     CONFIGURE_SPEAKER='configure_speaker',
     PLAY_MUSIC='play',
     STOP_MUSIC='stop',
+    CONNECTED_SPEAKER='speaker_connected'
 }
 export default ControllerSignals;
