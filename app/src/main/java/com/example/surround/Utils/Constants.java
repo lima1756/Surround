@@ -16,21 +16,25 @@ public class Constants {
 
     //SOCKETS PARAMS
     public static final String SOCKET_PARAM_TYPE_SPEAKER = "type_speaker";
-    public static final String SOCKET_PARAM_SONG_URL = "url_song";
-    public static final String SOCKET_PARAM_SONG_ARTIST= "artist_song";
-    public static final String SOCKET_PARAM_SONG_NAME = "name_song";
+    public static final String SOCKET_PARAM_SONG_ID = "song_id";
+    public static final String SOCKET_PARAM_SONG_ARTIST= "song_artist";
+    public static final String SOCKET_PARAM_SONG_NAME = "song_name";
     public static final String SOCKET_PARAM_MILLIS_PLAY = "millis_play";
-    public static final String SOCKET_PARAM_TIMESTAMP_PLAY = "timestamp_play";
+    public static final String SOCKET_PARAM_TIMESTAMP_PLAY = "timestamp";
 
     public static final String SOCKET_EMIT_LOGIN_SPEAKER = "login_speaker";
     public static final String SOCKET_EMIT_READY = "speaker_ready";
 
-    public static final String SOCKET_ON_PLAY = "on_play";
-    public static final String SOCKET_ON_SET_MUSIC = "on_set_music";
-    public static final String SOCKET_PARAM_TOKEN = "session_token";
+    public static final String SOCKET_ON_PLAY = "play";
+    public static final String SOCKET_ON_SET_MUSIC = "set_music";
+    public static final String SOCKET_ON_LOGIN_RESPONSE = "login_response";
+    public static final String SOCKET_ON_STOP_SONG = "stop_song";
+    public static final String SOCKET_ON_SET_SPEAKER = "set_speaker";
+
+    public static final String SOCKET_PARAM_TOKEN = "room";
+    public static final String SOCKET_PARAM_NAME = "name";
     public static final String SOCKET_PARAM_ID="id";
-    public static final String SOCKET_ON_STOP_SONG = "on_stop_song";
-    public static final String SOCKET_ON_SET_SPEAKER = "on_set_speaker";
+    public static final String SOCKET_PARAM_READY="ready";
 
 
 }

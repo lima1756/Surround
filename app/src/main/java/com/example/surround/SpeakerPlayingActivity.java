@@ -1,13 +1,10 @@
 package com.example.surround;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,16 +35,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public static final int SLEEP_TIME = 50; //milliseconds.
     //Minimum async delta = 2 * SLEEP_TIME
     //SONG PARAM .............................
-    String currentSongUrl;
+    String currentSongId;
     // hash number music  ?
     String artistSong, nameSong;
     int typeOfSpeaker;
     //...............................
 
-    ImageView ivStopBtn, ivDisk;
+    ImageView ivStopBtn, ivDisk, ivWait;
     Button btnTestStart;
     MediaPlayer mp;
-    TextView tvArtist, tvNameSong;
+    TextView tvArtist, tvNameSong, tvWait;
     boolean isPlaying, isReady;
     long lastTimestamp ;
     int lastMillis;
@@ -83,18 +80,39 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         @Override
         public void call(final Object... args) {
             JSONObject data = (JSONObject) args[0];
-            String url, artistSong, nameSong;
+            final String id, artistSong, nameSong;
+            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //Cambiar controles
+                    setLayoutComponentsPlay();
+                }
+            });
             try {
-                url = data.getString(Constants.SOCKET_PARAM_SONG_URL);
+                id = data.getString(Constants.SOCKET_PARAM_SONG_ID);
                 artistSong = data.getString(Constants.SOCKET_PARAM_SONG_ARTIST);
                 nameSong = data.getString(Constants.SOCKET_PARAM_SONG_NAME);
 
-                SpeakerPlayingActivity.this.onSetMusic( url);
-                SpeakerPlayingActivity.this.setSongMetadata(artistSong,nameSong);
+                SpeakerPlayingActivity.this.onSetMusic( id);
+                SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Cambiar controles
+                        SpeakerPlayingActivity.this.setSongMetadata(artistSong, nameSong);
+                    }
+                });
+
             }catch (JSONException e){
                 //TODO send error to socket?
                 //TODO or send to slave?
-                SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled");
+                SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Cambiar controles
+                        SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled");
+                    }
+                });
+
             }
         }
     };
@@ -126,12 +144,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         @Override
         public void call(final Object... args) {
             int millis;long timestamp;
+            Log.d("ON_PLAY", "got signal from server");
             JSONObject data = (JSONObject) args[0];
             try{
                 millis = data.getInt(Constants.SOCKET_PARAM_MILLIS_PLAY);
                 timestamp = data.getLong(Constants.SOCKET_PARAM_TIMESTAMP_PLAY);
+                Log.d("ON_PLAY", "timestamp:"+ timestamp);
                 SpeakerPlayingActivity.this.onPlayInMillisecond(timestamp,millis);
             }catch (JSONException e){
+                Log.d("PLAY", "error on play");
+                Log.d("PLAY", e.getMessage());
                 //TODO send error to socket?
                 //TODO or send to slave?
             }
@@ -164,7 +186,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speaker_playing);
-        setLayoutComponents();
+        setLayoutComponentsInit();
         setSongMetadata("Massive Attack", "Inertia Creeps");//TODO FROM SOCKETS
         isPlaying = false;
         isReady = false;
@@ -183,15 +205,12 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
         //--------------------------------------------------------
 
-        /*if(!app.getSocket().connected()){
-            app.getSocket().connect();
-        }*/
         app.getSocket().connect();
 
         //---------------------------TEST--------------------------------
-        isReady= true;
+        /*isReady= true;
         btnTestStart = findViewById(R.id.btn_test_start);
-        btnTestStart.setOnClickListener(testStart);
+        btnTestStart.setOnClickListener(testStart*/
 
 
     }
@@ -201,7 +220,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         Log.d("SPEAKER_PLAY", ""+app.getSocket().connected());
         String url = Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + "101";
         Log.d("SPEAKER_PLAY", url);
-        onSetMusic(url);
+        onSetMusic("101");
     }
 
     public void setSongMetadata(String artist, String nameSong){
@@ -211,14 +230,36 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         this.artistSong = artist;
     }
 
-    private void setLayoutComponents(){
+    public void setLayoutComponentsPlay(){
+        //WAITING
+        ivWait.setVisibility(View.GONE);
+        tvWait.setVisibility(View.GONE);
+        //PLAYING
+        ivStopBtn.setVisibility(View.VISIBLE);
+        tvArtist.setVisibility(View.VISIBLE);
+        tvNameSong.setVisibility(View.VISIBLE);
+        ivDisk.setVisibility(View.VISIBLE);
+    }
 
+    public void setLayoutComponentsInit(){
+        //wait
+        ivWait = findViewById(R.id.iv_wait);
+        ivWait.setVisibility(View.VISIBLE);
+        tvWait = findViewById(R.id.tv_wait);
+        tvWait.setVisibility(View.VISIBLE);
+
+        //playing
         ivStopBtn  = findViewById(R.id.iv_stop);
+        ivStopBtn.setVisibility(View.GONE);
         ivStopBtn.setOnClickListener(onStopBtn);
+
         tvArtist = findViewById(R.id.tv_artist_song);
+        tvArtist.setVisibility(View.GONE);
         tvNameSong = findViewById(R.id.tv_name_song);
+        tvNameSong.setVisibility(View.GONE);
 
         ivDisk = findViewById(R.id.iv_disc);
+        ivDisk.setVisibility(View.GONE);
 
 
     }
@@ -248,13 +289,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         isPlaying = false;
     }
 
-    public void onSetMusic(String url){
+    public void onSetMusic(String id){
         Log.d("SPEAKER_PLAY", "on get m Is playing: "+ isPlaying + "is ready "+ isReady);
         if(isPlaying)onStopSong();
-        if(url==null) return;
-        if(isReady && url.equals(currentSongUrl)) return;
+        if(id==null) return;
+        if(isReady && id.equals(currentSongId)) return;
         isReady = false;
-        currentSongUrl = url;
+        currentSongId = id;
 
         mp = new MediaPlayer();
 
@@ -264,6 +305,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mp.setOnPreparedListener(readyToPlay);
         try{
+            String url = Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL +id;
             mp.setDataSource(url);
             mp.prepareAsync(); // might take long! (for buffering, etc)
         }catch (IOException e){
@@ -295,6 +337,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     Thread startSong = new Thread(){
         public void run(){
             boolean done= false;
+            Log.d("ZZZ", "ABOUT TO PLAY THE SONG");
             while(!done){
                 long now = System.currentTimeMillis() ; //TODO agregar factor de correccion según server?
                 if(SpeakerPlayingActivity.this.lastTimestamp <= now ){
@@ -308,8 +351,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                     Log.d("","+"+SpeakerPlayingActivity.this.lastTimestamp+" ?>= "+now);
                 }catch (Exception e){
                     sendServerError(ERR_ASYNC_PLAY,"ERR_ASYNC_PLAY");
-                    mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
-                    mp.start();
+                    //mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
+                    //mp.start();
+                    //TODO
                     done = true;
                 }
             }
@@ -336,7 +380,14 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     public void sendMusicIsReadyToServer(){
         //TODO SOCKETS;
-        app.getSocket().emit(Constants.SOCKET_EMIT_READY);
+        JSONObject params= new JSONObject();
+        try{
+            params.put(Constants.SOCKET_PARAM_READY,true);
+            app.getSocket().emit(Constants.SOCKET_EMIT_READY, params);
+        }catch (JSONException e){
+
+        }
+
         //TEST ---------------------------
         //onPlayInMillisecond(System.currentTimeMillis()+20000, 30000);
         //--------------------------------
@@ -349,6 +400,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     // -----------------------------------------------
 
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        setLayoutComponentsInit();
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        setLayoutComponentsInit();
+    }
     @Override
     public void onBackPressed(){
         sendDisconnect();

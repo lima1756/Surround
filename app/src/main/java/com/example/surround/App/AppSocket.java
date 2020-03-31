@@ -11,25 +11,25 @@ import java.net.URISyntaxException;
 public class AppSocket extends Application {
     private  Socket mSocket;
     private static AppSocket app;
-    private int sessionToken;
 
-    private int hashId;
+    private String sessionToken;
+    private String name;
     private int typeOfSpeaker;
 
-    public int getSessionToken() {
+    public String getSessionToken() {
         return sessionToken;
     }
 
-    public void setSessionToken(int sessionToken) {
+    public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
 
-    public int getHashId() {
-        return hashId;
+    public String getName() {
+        return name;
     }
 
-    public void setHashId(int hashId) {
-        this.hashId = hashId;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getTypeOfSpeaker() {
