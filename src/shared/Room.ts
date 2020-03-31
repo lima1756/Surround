@@ -104,12 +104,15 @@ class Room{
         this.songID = song_id;
         this.songStart = songStartTime;
         this.songName = "";
+        Logger.Info("Preparing speakers");
         for(const [_id, user] of Object.entries(this.speakers)){
             user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song_id, "song_artist": "artista", "song_name":"cancion"})
+            Logger.Info("Prepared: " + user.getName());
         }
     }
 
     public stopSpeakers() {
+        this.status = RoomStatus.PAUSE;
         for(const [_id, user] of Object.entries(this.speakers)){
             user.getSocket().emit<SpekerStopSignal>(SpeakerSignals.STOP_SONG, {"stop":true})
         }
