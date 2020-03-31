@@ -114,6 +114,7 @@ class Room{
     public stopSpeakers() {
         this.status = RoomStatus.PAUSE;
         for(const [_id, user] of Object.entries(this.speakers)){
+            user.setStatus(UserStatus.PAUSED);
             user.getSocket().emit<SpekerStopSignal>(SpeakerSignals.STOP_SONG, {"stop":true})
         }
     }
