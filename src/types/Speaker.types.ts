@@ -16,7 +16,8 @@ export interface SpeakerSetTypeSignal {
 }
 
 export interface SpeakerPlaySignal{
-    timestamp:number
+    timestamp:number,
+    song_timestamp: number
 }
 
 export interface SpeakerPrepareSignal{

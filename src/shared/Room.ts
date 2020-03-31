@@ -75,17 +75,19 @@ class Room{
     public speakersReady(): boolean {
         for(const [_id, user] of Object.entries(this.speakers)){
             if(user.getStatus() != UserStatus.READY){
-                Logger.Info("Speakers not ready: " + user.getName());
+                Logger.Info("Speakers NOT ready: " + user.getName());
                 return false;
             }
             Logger.Info("Speaker ready: " + user.getName());
         }
+        Logger.Info("Speakers ready: TRUE");
         return true;
     }
 
     public playSpeakers() {
+        Logger.Info("Playing music in room: " + this.id);
         for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000})
+            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "song_timestamp": 0})
         }
     }
 
