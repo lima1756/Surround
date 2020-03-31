@@ -4,6 +4,7 @@ enum ControllerSignals {
     CONFIGURE_SPEAKER_RESPONSE = 'configure_speaker_response',
     PLAY_MUSIC_RESPONSE = 'play_response',
     STOP_MUSIC_RESPONSE = 'stop_response',
+    SPEAKER_DISCONNECTED = 'speaker_disconnected',
     // recibo    
     LOGIN = 'login_controller',
     CONFIGURE_SPEAKER='configure_speaker',

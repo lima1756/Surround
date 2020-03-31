@@ -23,3 +23,8 @@ export interface ControllerSpeakerConnected {
     name: string,
     type: Equalizer
 }
+
+export interface ControllerSpeakerDisconnected {
+    id: string,
+    name: string
+}

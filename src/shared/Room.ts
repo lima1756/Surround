@@ -5,6 +5,8 @@ import SpeakerSignals from '../constants/SpeakerSignals.enum';
 import { Disconnect } from '../types/Shared.types';
 import { SpeakerPlaySignal, SpeakerPrepareSignal, SpekerStopSignal } from 'src/types/Speaker.types';
 import { Logger } from '@overnightjs/logger';
+import ControllerSignals from '../constants/ControllerSignals.enum';
+import { ControllerSpeakerDisconnected } from 'src/types/Controller.types';
 
 class Room{
     private controller: User;
@@ -53,6 +55,7 @@ class Room{
             throw new Error("speaker doesn't exist");
         }
         const user = this.speakers[id]
+        this.controller.getSocket().emit<ControllerSpeakerDisconnected>(ControllerSignals.SPEAKER_DISCONNECTED,{"id": id, "name": user.getName()})
         if(disconnectResponse)
             user.getSocket().emit("disconnect", disconnectResponse);
         user.getSocket().disconnect();
@@ -72,8 +75,10 @@ class Room{
     public speakersReady(): boolean {
         for(const [_id, user] of Object.entries(this.speakers)){
             if(user.getStatus() != UserStatus.READY){
+                Logger.Info("Speakers not ready: " + user.getName());
                 return false;
             }
+            Logger.Info("Speaker ready: " + user.getName());
         }
         return true;
     }
