@@ -13,13 +13,19 @@ class Room{
     private speakers: { [id:string]:User } = {};
     private id: string;
     private static KEYS= ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-    private status: RoomStatus
+    private status: RoomStatus;
+    private songStart?: number;
+    private songID?: string;
+    private songName?: string;
 
     
     constructor(controller: User, id: string){
         this.controller = controller;
         this.id = id;
         this.status = RoomStatus.CREATED;
+        this.songStart = undefined;
+        this.songID = undefined;
+        this.songName = undefined;
     }
 
     static genID(): string{
@@ -88,12 +94,16 @@ class Room{
         Logger.Info("Playing music in room: " + this.id);
         for(const [_id, user] of Object.entries(this.speakers)){
             Logger.Info("Playing music: " + user.getName());
-            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "millis_play": 0})
+            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "millis_play": (this.songStart?this.songStart:0)})
         }
     }
 
-    public prepareSpeakers(song_id: string) {
+    public prepareSpeakers(song_id: string, songStartTime: number) {
         // TODO: send real data retrieved from DB
+        this.status = RoomStatus.PLAYING;
+        this.songID = song_id;
+        this.songStart = songStartTime;
+        this.songName = "";
         for(const [_id, user] of Object.entries(this.speakers)){
             user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song_id, "song_artist": "artista", "song_name":"cancion"})
         }

@@ -11,6 +11,7 @@ export interface ControllerConfigurationRequest{
 
 export interface ControllerPlayRequest{
     song_id: string;
+    millis_play: number;
 }
 
 export interface ControllerLoginResponse {

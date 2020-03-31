@@ -107,7 +107,7 @@ class SocketIOController {
                     socket.emit(ControllerSignals.PLAY_MUSIC_RESPONSE, {"error": "Selected room doesn't exist."});
                     return;
                 }
-                room.prepareSpeakers(data.song_id);
+                room.prepareSpeakers(data.song_id, data.millis_play);
                 socket.emit<OkResponse>(ControllerSignals.PLAY_MUSIC_RESPONSE, {"ok": true})
             })
 
