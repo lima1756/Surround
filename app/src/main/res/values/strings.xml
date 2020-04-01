@@ -4,8 +4,8 @@
     <string name="speaker_description">Play music</string>
     <string name="controller">Controller</string>
     <string name="controller_description">Select a song</string>
-    <string name="login_speaker_token">Insert your session token</string>
-    <string name="login_speaker_name">Insert your nickname</string>
+    <string name="login_speaker_token">Insert your\nsession token</string>
+    <string name="login_speaker_name">Insert your\nnickname</string>
     <string name="et_speaker_hint">Token</string>
     <string name="controller_instrucctions">TODO</string>
     <string name="lorem_short">Lorem Ipsum</string>

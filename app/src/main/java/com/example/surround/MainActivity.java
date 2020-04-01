@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private void setComponents(){
         controller = findViewById(R.id.tv_controller);
         desController = findViewById(R.id.tv_des_cont);
-        desSpeaker = findViewById(R.id.tv_des_speaker);
+        desSpeaker = findViewById(R.id.tv_des_sp);
+        desSpeaker.setVisibility(View.VISIBLE);
         speaker = findViewById(R.id.tv_speaker);
 
         ivController = findViewById(R.id.iv_controller);
