@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     TextView controller, desController, speaker, desSpeaker;
     ImageView ivController, ivSpeaker;
 
-
+    //-----------VIEW LISTENERS--------------------------------------
     View.OnClickListener onClickSpeaker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -27,13 +27,12 @@ public class MainActivity extends AppCompatActivity {
             goToController();
         }
     };
-
+    //---------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setComponents();
     }
 

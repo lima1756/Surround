@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF252525"
+    android:background="@color/colorBackground"
     tools:context=".SpeakerMainActivity">
 
     <TextView
@@ -46,7 +46,6 @@
         android:hint="@string/et_speaker_hint"
         android:imeOptions="actionSend"
         android:inputType="text"
-        android:textColorHint="#AAFFFFFF"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

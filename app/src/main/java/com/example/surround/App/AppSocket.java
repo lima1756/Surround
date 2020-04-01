@@ -42,12 +42,11 @@ public class AppSocket extends Application {
 
 
     public  static AppSocket getInstance() {
-        if (app==null) {
-            app = new AppSocket();
-        }
+        if (app==null) app = new AppSocket();
         return app;
     }
     private AppSocket(){
+        typeOfSpeaker = Constants.EQUALIZER_CENTER_SPEAKER;
         try {
             mSocket = IO.socket(Constants.SERVER_URL);
         } catch (URISyntaxException e) {
@@ -55,7 +54,5 @@ public class AppSocket extends Application {
         }
     }
 
-    public Socket getSocket() {
-        return mSocket;
-    }
+    public Socket getSocket() { return mSocket; }
 }

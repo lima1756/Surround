@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.surround.App.AppSocket;
 import com.example.surround.Utils.Constants;
@@ -25,8 +26,6 @@ import java.io.IOException;
 
 public class SpeakerPlayingActivity extends AppCompatActivity {
 
-
-    //TODO THREADS ON PLAY, ON PLAY MILISECONDS, TO GET SYNC.
     public static final int ERR_NOT_ABLE_PREPARE_SONG = 2;
     public static final int ERR_NOT_INIT_MEDIA_PLAYER = 1;
     public static final int ERR_ASYNC_PLAY = 3;
@@ -34,11 +33,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     public static final int SLEEP_TIME = 50; //milliseconds.
     //Minimum async delta = 2 * SLEEP_TIME
+
     //SONG PARAM .............................
-    String currentSongId;
-    // hash number music  ?
-    String artistSong, nameSong;
-    int typeOfSpeaker;
+    String currentSongId, artistSong, nameSong;
     //...............................
 
     ImageView ivStopBtn, ivDisk, ivWait;
@@ -48,15 +45,20 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     boolean isPlaying, isReady;
     long lastTimestamp ;
     int lastMillis;
-
     MyEqualizer myEq;
     AppSocket app;
+
+    /*---------------------- TEST------------------------
     View.OnClickListener testStart = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // For test propouses.
             tests();
         }
     };
+    ---------------------------------------------------*/
+
+    //-------------------- View listeners
     View.OnClickListener onStopBtn = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -66,7 +68,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
-
+    // --------------------MediaPlayer Listeners
     MediaPlayer.OnPreparedListener readyToPlay = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
@@ -83,9 +85,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             final String id, artistSong, nameSong;
             SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                 @Override
-                public void run() {
-                    //Cambiar controles
-                    setLayoutComponentsPlay();
+                public void run() { setLayoutComponentsPlay(); //Cambiar controles
                 }
             });
             try {
@@ -97,22 +97,18 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Cambiar controles
-                        SpeakerPlayingActivity.this.setSongMetadata(artistSong, nameSong);
+                        SpeakerPlayingActivity.this.setSongMetadata(artistSong, nameSong); //Cambiar controles
                     }
                 });
-
             }catch (JSONException e){
                 //TODO send error to socket?
                 //TODO or send to slave?
                 SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Cambiar controles
-                        SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled");
+                        SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled"); //Cambiar controles
                     }
                 });
-
             }
         }
     };
@@ -126,8 +122,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 tSpk = data.getInt(Constants.SOCKET_PARAM_TYPE_SPEAKER);
                 SpeakerPlayingActivity.this.onSetSpeaker( tSpk);
             }catch (JSONException e){
-                //TODO send error to socket?
-                //TODO or send to slave?
+                //TODO send error to socket? or send to slave?
                 SpeakerPlayingActivity.this.onSetSpeaker(Constants.EQUALIZER_CENTER_SPEAKER); //Default
             }
         }
@@ -135,9 +130,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     private Emitter.Listener socketOnStopSong = new Emitter.Listener() {
         @Override
-        public void call(final Object... args) {
-            SpeakerPlayingActivity.this.onStopSong();
-        }
+        public void call(final Object... args) { SpeakerPlayingActivity.this.onStopSong(); }
     };
 
     private Emitter.Listener socketOnPlay = new Emitter.Listener() {
@@ -154,8 +147,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             }catch (JSONException e){
                 Log.d("PLAY", "error on play");
                 Log.d("PLAY", e.getMessage());
-                //TODO send error to socket?
-                //TODO or send to slave?
+                //TODO send error to socket? or send to slave?
             }
         }
     };
@@ -165,7 +157,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         public void call(Object... args) {
             Intent i = new Intent(SpeakerPlayingActivity.this, MainActivity.class);
             startActivity(i);
-            //TODO
+            Toast.makeText(getApplicationContext(),"Connection was lost.",Toast.LENGTH_LONG);
         }
     };
 
@@ -181,18 +173,15 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     //.............................................................
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speaker_playing);
         setLayoutComponentsInit();
-        setSongMetadata("Massive Attack", "Inertia Creeps");//TODO FROM SOCKETS
         isPlaying = false;
         isReady = false;
-        typeOfSpeaker= Constants.EQUALIZER_FRONT_LEFT_SPEAKER;
-        app = AppSocket.getInstance();
 
+        app = AppSocket.getInstance();
         //SOCKET LISTENERS --------------------------------------
 
         app.getSocket().on(Constants.SOCKET_ON_SET_SPEAKER, socketOnSetSpeaker);
@@ -211,6 +200,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         /*isReady= true;
         btnTestStart = findViewById(R.id.btn_test_start);
         btnTestStart.setOnClickListener(testStart*/
+        //---------------------------------------------------------------
 
 
     }
@@ -261,7 +251,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         ivDisk = findViewById(R.id.iv_disc);
         ivDisk.setVisibility(View.GONE);
 
-
+        setSongMetadata("No Artist", "Untitled");
     }
 
     private void releaseMediaPlayer(){
@@ -273,19 +263,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
     //SOCKETS-LISTENERS -----------------------------------
     public void onSetSpeaker(int typeOfSpeaker){
-        this.typeOfSpeaker = typeOfSpeaker;
-        if(myEq==null){
-            myEq = new MyEqualizer(null,this.typeOfSpeaker);
-        }else{
-            myEq.setTypeSpeaker(typeOfSpeaker);
-        }
+        app.setTypeOfSpeaker(typeOfSpeaker);
+        if(myEq==null) {myEq = new MyEqualizer(null,typeOfSpeaker);}
+        else { myEq.setTypeSpeaker(typeOfSpeaker);}
     }
 
     public void onStopSong(){
-        if(mp != null){
-            mp.stop(); //TODO decidir si podremos volvernos a conectar al server a media canción o no.
-
-        }
+        if(mp != null)mp.stop(); //TODO decidir si podremos volvernos a conectar al server a media canción o no.
         isPlaying = false;
     }
 
@@ -299,7 +283,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
         mp = new MediaPlayer();
 
-        if(myEq==null)myEq = new MyEqualizer(mp,typeOfSpeaker);
+        if(myEq==null)myEq = new MyEqualizer(mp,app.getTypeOfSpeaker());
         else myEq.setMp(mp);
 
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -321,6 +305,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public void onPlayInMillisecond(long timestamp, int milis) {
         this.lastTimestamp = timestamp;
         this.lastMillis = milis;
+        Thread startSong;
 
         if (mp == null) {
             sendServerError(ERR_NOT_INIT_MEDIA_PLAYER, "ERR_NOT_INIT_MEDIA_PLAYER");
@@ -331,43 +316,37 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             return;
         }
         Log.d("SPEAKER_PLAY", "HOLA");
-        startSong.start();
-    }
-
-    Thread startSong = new Thread(){
-        public void run(){
-            boolean done= false;
-            Log.d("ZZZ", "ABOUT TO PLAY THE SONG");
-            while(!done){
-                long now = System.currentTimeMillis() ; //TODO agregar factor de correccion según server?
-                if(SpeakerPlayingActivity.this.lastTimestamp <= now ){
-                    mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
-                    mp.start();
-                    myEq.getEq().setEnabled(true);
-                    done = true;
-                }
-                try {
-                    Thread.sleep(SLEEP_TIME);
-                    Log.d("","+"+SpeakerPlayingActivity.this.lastTimestamp+" ?>= "+now);
-                }catch (Exception e){
-                    sendServerError(ERR_ASYNC_PLAY,"ERR_ASYNC_PLAY");
-                    //mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
-                    //mp.start();
-                    //TODO
-                    done = true;
+        startSong = new Thread(){
+            public void run(){
+                boolean done= false;
+                long now;
+                Log.d("ZZZ", "ABOUT TO PLAY THE SONG");
+                while(!done){
+                    now = System.currentTimeMillis() ; //TODO agregar factor de correccion según server?
+                    if(SpeakerPlayingActivity.this.lastTimestamp <= now ){
+                        mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
+                        mp.start();
+                        myEq.getEq().setEnabled(true);
+                        done = true;
+                    }
+                    try {
+                        Thread.sleep(SLEEP_TIME); // waiting to play sync.
+                    }catch (Exception e){
+                        sendServerError(ERR_ASYNC_PLAY,"ERR_ASYNC_PLAY");
+                        //TODO
+                        done = true;
+                    }
                 }
             }
-        }
-    };
-
-
+        };
+        startSong.start();
+    }
 
     //SOCKETS-SEND ------------------------------------------
 
     private void sendDisconnect(){
         releaseMediaPlayer();
         app.getSocket().disconnect();
-        //TODO APP  remove ALL LISTENERS
         app.getSocket().off("onSetSpeaker", socketOnSetSpeaker);
         app.getSocket().off("onStopSong", socketOnStopSong);
         app.getSocket().off("onSetMusic", socketOnSetMusic);
@@ -375,19 +354,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         app.getSocket().off(Socket.EVENT_DISCONNECT,onDisconnect);
         app.getSocket().off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         app.getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-
     }
 
     public void sendMusicIsReadyToServer(){
-        //TODO SOCKETS;
         JSONObject params= new JSONObject();
         try{
             params.put(Constants.SOCKET_PARAM_READY,true);
             app.getSocket().emit(Constants.SOCKET_EMIT_READY, params);
         }catch (JSONException e){
-
+            //TODO
         }
-
         //TEST ---------------------------
         //onPlayInMillisecond(System.currentTimeMillis()+20000, 30000);
         //--------------------------------
