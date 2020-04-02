@@ -25,10 +25,14 @@ public class SongFragment extends Fragment {
     public Song currentSong;
     public ImageView songIcon, play, prev, next;
     public TextView songTitle, songArtist, songDuration;
-    public MediaPlayer mediaPlayer;
+    //public MediaPlayer mediaPlayer;
 
-    public SongFragment(Song song) {
-        this.currentSong = song;
+    public SongFragment(Song song) { this.currentSong = song; }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        System.out.println("OKAY DON'T FUCKER INTHE PUSSY");
     }
 
     @Override
@@ -47,11 +51,14 @@ public class SongFragment extends Fragment {
         songArtist = (TextView)view.findViewById(R.id.songArtistTV);
         //songDuration = (TextView)view.findViewById(R.id.);
         //mediaPlayer = MediaPlayer.create(getContext(), );
+        prev = (ImageView)view.findViewById(R.id.prevIV);
+        next = (ImageView)view.findViewById(R.id.nextIV);
+        play = (ImageView)view.findViewById(R.id.playIV);
 
-        songIcon.setImageIcon(currentSong.image);
+        songIcon.setImageResource(R.drawable.summer69);
         songTitle.setText(currentSong.title);
         songArtist.setText(currentSong.artist);
-        //songDuration.setText(currentSong.duration);
+        songDuration.setText(currentSong.duration);
     }
 
     public void play(View view){

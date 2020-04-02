@@ -1,7 +1,10 @@
 package com.example.surround;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.surround.ControllerFragment.OnListFragmentInteractionListener;
 import com.example.surround.dummy.DummyContent.DummyItem;
+
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.List;
 
@@ -31,14 +36,17 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_controller, parent, false);
+                .inflate(R.layout.recycler_view_item, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        //Log.d("image resource", holder.toString());
+
         holder.song = songs.get(position);
-        holder.imgv.setImageIcon(songs.get(position).image);
+        holder.imgv.setImageResource(songs.get(position).imageRes);
         holder.titTV.setText(songs.get(position).title);
         holder.artTV.setText(songs.get(position).artist);
         holder.durTV.setText(songs.get(position).duration+"");
@@ -46,15 +54,36 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (mListener != null) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.song);
-
+                    //fragmentJump(holder.song);
                 }
             }
         });
     }
+/*
+    private void fragmentJump(Song song) {
+        SongFragment songF = new SongFragment(song);
+        Bundle songBundle = new Bundle();
+        songBundle.putParcelable("item_selected_key", mItemSelected);
+        songF.setArguments(songBundle);
+        switchContent(R.id.controllerFrag, songF);
+    }
+
+    public void switchContent(int id, Fragment songF) {
+        if (mContext == null)
+            return;
+        if (mContext instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) mContext;
+            Fragment frag = fragment;
+            mainActivity.switchContent(id, frag);
+        }
+
+    }
+    
+ */
 
     @Override
     public int getItemCount() {
@@ -72,6 +101,7 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            Log.d("Se creo el mView", mView.toString());
             imgv = (ImageView) view.findViewById(R.id.imgView);
             titTV = (TextView) view.findViewById(R.id.titleTV);
             artTV= (TextView) view.findViewById(R.id.artistTV);
@@ -80,7 +110,11 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
 
         @Override
         public String toString() {
-            return super.toString() + " '" + titTV.getText() + "'" + artTV.getText() + "'" + durTV.getText() + "' ";
+            return super.toString() +
+                    " '" + titTV.getText().toString() +
+                    "'" + artTV.getText().toString() +
+                    "'" + durTV.getText().toString() +
+                    "' ";
         }
     }
 }

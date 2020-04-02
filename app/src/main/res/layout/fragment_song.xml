@@ -5,26 +5,57 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FF252525"
     tools:context=".SongFragment">
-
-    <ImageView
-        android:id="@+id/songImageIV"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/songTitleTV"
         android:layout_width="218dp"
         android:layout_height="35dp"
-        android:layout_marginStart="96dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toStartOf=""
+        app:layout_constraintBottom_toTopOf="@+id/songArtistTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songImageIV" />
+        app:layout_constraintTop_toBottomOf="@+id/songImageIV"
+        android:background="@color/cardview_light_background"
+        />
+
+    <ImageView
+        android:id="@+id/playIV"
+        android:layout_width="74dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="16dp"
+        android:onClick="play"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/nextIV"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/prevIV"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="242dp"
+        android:layout_height="31dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/playIV"
+        app:layout_constraintEnd_toStartOf="@+id/durationTV"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:background="@color/cardview_light_background"
+        app:layout_constraintStart_toEndOf="@+id/timeEllapsedTV"
+        app:layout_constraintTop_toBottomOf="@+id/songArtistTV" />
+
+    <ImageView
+        android:id="@+id/songImageIV"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:background="@color/cardview_light_background"
+        app:layout_constraintBottom_toTopOf="@+id/songTitleTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/songArtistTV"
@@ -32,67 +63,62 @@
         android:layout_height="22dp"
         android:layout_marginStart="144dp"
         android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songTitleTV" />
+        app:layout_constraintTop_toBottomOf="@+id/songTitleTV"
+        android:background="@color/cardview_light_background"
+        />
 
     <TextView
         android:id="@+id/durationTV"
         android:layout_width="28dp"
         android:layout_height="19dp"
-        android:layout_marginStart="24dp"
         android:layout_marginBottom="240dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/seekBar" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/seekBar"
+        android:background="@color/cardview_light_background"
+        />
 
     <TextView
         android:id="@+id/timeEllapsedTV"
         android:layout_width="28dp"
         android:layout_height="19dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginBottom="240dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="242dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toStartOf="@+id/seekBar"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songArtistTV" />
-
-    <ImageView
-        android:id="@+id/playIV"
-        android:layout_width="74dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="16dp"
-        android:onClick="play"
-        android:src="@android:drawable/ic_media_play"
-        app:layout_constraintStart_toEndOf="@+id/prevIV"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        android:background="@color/cardview_light_background"
+        />
 
     <ImageView
         android:id="@+id/prevIV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
         android:layout_marginTop="28dp"
         android:onClick="previous"
         android:src="@android:drawable/ic_media_previous"
+        app:layout_constraintEnd_toStartOf="@+id/playIV"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        android:background="@color/cardview_light_background"
+        />
 
     <ImageView
         android:id="@+id/nextIV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
         android:layout_marginTop="28dp"
         android:onClick="next"
         android:src="@android:drawable/ic_media_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playIV"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        android:background="@color/cardview_light_background"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.surround;
 
 import android.content.Context;
+import android.graphics.drawable.*;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+//import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 /**
@@ -40,12 +43,13 @@ public class ControllerFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ControllerFragment() {
-    }
+
+    public ControllerFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -62,6 +66,12 @@ public class ControllerFragment extends Fragment {
             artist = view.findViewById(R.id.artistTV);
             duration = view.findViewById(R.id.durationTV);
             controllerArrayList = new ArrayList<>();
+            //Icon i = new Icon(R.drawable.summer69);
+
+            controllerArrayList.add(
+                    new Song(384, R.drawable.summer69, "Summer of 69", "Bryan Adams", 150)
+            );
+
             adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, mListener);
             //recyclerView.setAdapter(adapter);
 
@@ -111,5 +121,8 @@ public class ControllerFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Song song);
+
+        void onFragmentInteraction(Uri uri);
     }
+
 }
