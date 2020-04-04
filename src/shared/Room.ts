@@ -7,6 +7,7 @@ import { SpeakerPlaySignal, SpeakerPrepareSignal, SpekerStopSignal } from 'src/t
 import { Logger } from '@overnightjs/logger';
 import ControllerSignals from '../constants/ControllerSignals.enum';
 import { ControllerSpeakerDisconnected } from 'src/types/Controller.types';
+import Song, { SongHelper } from '../models/Song.model';
 
 class Room{
     private controller: User;
@@ -99,16 +100,20 @@ class Room{
     }
 
     public prepareSpeakers(song_id: string, songStartTime: number) {
-        // TODO: send real data retrieved from DB
         this.status = RoomStatus.PLAYING;
         this.songID = song_id;
         this.songStart = songStartTime;
         this.songName = "";
-        Logger.Info("Preparing speakers");
-        for(const [_id, user] of Object.entries(this.speakers)){
-            user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song_id, "song_artist": "artista", "song_name":"cancion"})
-            Logger.Info("Prepared: " + user.getName());
-        }
+        SongHelper.findById(song_id).then(song=>{
+            if(!song){
+                return;
+            }
+            Logger.Info("Preparing speakers");
+            for(const [_id, user] of Object.entries(this.speakers)){
+                user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song.id, "song_artist": song.artist, "song_name":song.name})
+                Logger.Info("Prepared: " + user.getName());
+            }  
+        })
     }
 
     public stopSpeakers() {

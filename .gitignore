@@ -1,4 +1,10 @@
 node_modules
 public/*
-!public/song.mp3
+public/songs/*
+public/images/*
+!public/songs/song.mp3
+!public/images/nothing.md
+!public/songs
+!public/images
 build
+.env

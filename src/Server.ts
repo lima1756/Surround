@@ -9,7 +9,8 @@ import SocketIOController from './controllers/socketio/SocketIOController';
 import * as cors from 'cors';
 import * as http from 'http';
 import fileUpload = require('express-fileupload');
-
+import mongoose from 'mongoose';
+require('dotenv').config()
 
 class SorroundServer extends Server {
 
@@ -35,7 +36,8 @@ class SorroundServer extends Server {
         this.app.use(express.static(SorroundServer.PATH));
         this.app.use(fileUpload())
         this.port = process.env.PORT || SorroundServer.DEV_PORT;
-        
+        // Mongo configuration
+        mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/surround', { useNewUrlParser: true, useUnifiedTopology: true });
         this.setupControllers();
         if (process.env.NODE_ENV !== 'production'){
             this.app.get('/', (req, res) => res.send(SorroundServer.DEV_MSG));
