@@ -77,6 +77,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
+    // TODO (@lima1756): revisar que catches se envian al servidor como una solicitud para reintentar (cuales llevan contador) y cuales solo se informa al usuario
     //SOCKET-IO LISTENERS .........................................
     private Emitter.Listener socketOnSetMusic = new Emitter.Listener() {
         @Override
@@ -101,8 +102,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                     }
                 });
             }catch (JSONException e){
-                //TODO send error to socket?
-                //TODO or send to slave?
+                // TODO: send an error to the server requesting again for the data to prepare agregar un contador de un maximo numero de intentos
                 SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -122,7 +122,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 tSpk = data.getInt(Constants.SOCKET_PARAM_TYPE_SPEAKER);
                 SpeakerPlayingActivity.this.onSetSpeaker( tSpk);
             }catch (JSONException e){
-                //TODO send error to socket? or send to slave?
+                //TODO send error to server, requesting again for the data
                 SpeakerPlayingActivity.this.onSetSpeaker(Constants.EQUALIZER_CENTER_SPEAKER); //Default
             }
         }
@@ -161,12 +161,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            //TODO
-        }
-    };
 
 
 
@@ -189,8 +183,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         app.getSocket().on(Constants.SOCKET_ON_SET_MUSIC, socketOnSetMusic);
         app.getSocket().on(Constants.SOCKET_ON_PLAY, socketOnPlay);
         app.getSocket().on(Socket.EVENT_DISCONNECT,onDisconnect);
-        app.getSocket().on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        app.getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
 
         //--------------------------------------------------------
 
@@ -352,10 +344,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         app.getSocket().off("onSetMusic", socketOnSetMusic);
         app.getSocket().off("onPlay", socketOnPlay);
         app.getSocket().off(Socket.EVENT_DISCONNECT,onDisconnect);
-        app.getSocket().off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        app.getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
     }
 
+    // TODO (@lima1756): same as SOCKET-IO LISTENERS
     public void sendMusicIsReadyToServer(){
         JSONObject params= new JSONObject();
         try{
