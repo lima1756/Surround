@@ -1,6 +1,7 @@
 import UserKind from '../constants/UserKind.enum';
 import UserStatus from '../constants/UserStatus.enum';
-import { Socket } from 'src/types/Socket.type';
+import { Socket } from '../types/Socket.type';
+import Equalizer from '../constants/Equalizer.enum';
 
 class User {
     private id: string;
@@ -9,6 +10,7 @@ class User {
     private socket: Socket;
     private roomID: string;
     private status: UserStatus;
+    private equalizerType: Equalizer;
 
     constructor(socket: Socket){
         this.id = Date.now().toString();
@@ -17,6 +19,7 @@ class User {
         this.kind = UserKind.UNDEFINED;
         this.name = "";
         this.status = UserStatus.UNDEFINED;
+        this.equalizerType = Equalizer.NONE;
     }
 
     setKind(kind: UserKind){
@@ -33,6 +36,10 @@ class User {
 
     setStatus(status: UserStatus){
         this.status = status;
+    }
+
+    setEqualizerType(type: Equalizer){
+        this.equalizerType = type;
     }
 
     getRoomID():string{
@@ -57,6 +64,10 @@ class User {
 
     getStatus(): UserStatus{
         return this.status;
+    }
+
+    getEqualizerType(): Equalizer{
+        return this.equalizerType;
     }
 }
 

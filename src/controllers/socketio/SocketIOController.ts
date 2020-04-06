@@ -5,11 +5,12 @@ import UserKind from '../../constants/UserKind.enum';
 import UserStatus from '../../constants/UserStatus.enum';
 import SpeakerSignals from '../../constants/SpeakerSignals.enum';
 import ControllerSignals from '../../constants/ControllerSignals.enum';
-import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal, SpeakerReadyRequest } from '../../types/Speaker.types';
+import { SpeakerLoginRequest, SpeakerLoginResponse, SpeakerSetTypeSignal, SpeakerReadyRequest, SpeakerPrepareSignal, SpeakerPlaySignal } from '../../types/Speaker.types';
 import { ControllerConfigurationRequest, ControllerPlayRequest, ControllerLoginResponse, ControllerLoginRequest, ControllerSpeakerConnected } from '../../types/Controller.types';
-import { ErrorResponse, OkResponse } from 'src/types/Shared.types';
-import { Socket } from 'src/types/Socket.type';
+import { ErrorResponse, OkResponse } from '../../types/Shared.types';
+import { Socket } from '../../types/Socket.type';
 import Equalizer from '../../constants/Equalizer.enum';
+import { SongHelper } from '../../models/Song.model';
 
 
 class SocketIOController {
@@ -35,6 +36,7 @@ class SocketIOController {
                     user.setName(data.name);
                     user.setKind(UserKind.SPEAKER)
                     user.setRoomID(data.room);
+                    user.setEqualizerType(Equalizer.CENTER_SPEAKER);
                     this.rooms[data.room].addSpeaker(user);
                     Logger.Info("Speaker connecting to room");
                     socket.emit<SpeakerLoginResponse>(SpeakerSignals.LOGIN_RESPONSE, {"type_speaker": 2});
@@ -61,6 +63,31 @@ class SocketIOController {
                 }
             });
 
+            socket.on(SpeakerSignals.SET_MUSIC_ERROR, () => {
+                const songID = this.rooms[user.getRoomID()].getSongID();
+                if(!songID){
+                    return;
+                }
+                SongHelper.findById(songID).then(song=>{
+                    if(!song){
+                        return;
+                    }
+                    Logger.Info("Preparing speaker");
+                    user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song.id, "song_artist": song.artist, "song_name":song.name})
+                })
+            })
+
+            socket.on(SpeakerSignals.PLAY_ERROR, () => {
+                const room = this.rooms[user.getRoomID()];
+                const timestamp = room.getTimeStart()?room.getTimeStart():Date.now()+2000;
+                const startSong = room.getSongStart()?room.getSongStart():0;
+                user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": timestamp!, "millis_play": startSong!})
+            })
+
+            socket.on(SpeakerSignals.SET_SPEAKER_ERROR, () => {
+                user.getSocket().emit<SpeakerSetTypeSignal>(SpeakerSignals.SET_TYPE,  {"type_speaker": user.getEqualizerType()});
+            })
+
             // Controller listeners
             socket.on(ControllerSignals.LOGIN, (data: ControllerLoginRequest) => {
                 let id = Room.genID();
@@ -69,6 +96,7 @@ class SocketIOController {
                 }
                 user.setName(data.name);
                 user.setKind(UserKind.CONTROLLER);
+                user.setEqualizerType(Equalizer.NONE);
                 let room = new Room(user, id);
                 user.setRoomID(id);
                 this.rooms[id] = room;
@@ -87,6 +115,7 @@ class SocketIOController {
                     socket.emit<ErrorResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE, {"error": "User doesn't exist in room."});
                     return;
                 }
+                speaker.setEqualizerType(data.type);
                 speaker.getSocket().emit<SpeakerSetTypeSignal>(SpeakerSignals.SET_TYPE,  {"type_speaker": data.type});
                 socket.emit<OkResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE,  {"ok":true});
             })

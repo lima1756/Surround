@@ -18,6 +18,7 @@ class Room{
     private songStart?: number;
     private songID?: string;
     private songName?: string;
+    private timeStart?: number;
 
     
     constructor(controller: User, id: string){
@@ -93,9 +94,10 @@ class Room{
 
     public playSpeakers() {
         Logger.Info("Playing music in room: " + this.id);
+        this.timeStart = Date.now() + 3000;
         for(const [_id, user] of Object.entries(this.speakers)){
             Logger.Info("Playing music: " + user.getName());
-            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": Date.now()+3000, "millis_play": (this.songStart?this.songStart:0)})
+            user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": this.timeStart, "millis_play": (this.songStart?this.songStart:0)})
         }
     }
 
@@ -122,6 +124,18 @@ class Room{
             user.setStatus(UserStatus.PAUSED);
             user.getSocket().emit<SpekerStopSignal>(SpeakerSignals.STOP_SONG, {"stop":true})
         }
+    }
+
+    public getSongID(){
+        return this.songID;
+    }
+
+    public getTimeStart(){
+        return this.timeStart;
+    }
+
+    public getSongStart(){
+        return this.songStart;
     }
 }
 

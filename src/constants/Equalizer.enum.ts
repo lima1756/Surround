@@ -8,6 +8,7 @@ enum Equalizer{
     LEFT_SPEAKER =4,
     BACK_LEFT_SPEAKER  =6,   
     BACK_RIGHT_SPEAKER =7,
+    NONE = -1
 }
 
 export default Equalizer;
