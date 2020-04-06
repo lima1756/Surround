@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +49,14 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     MyEqualizer myEq;
     AppSocket app;
 
+    // ERROR COUNTERS ---------------------------
+    private Integer[] setMusicErrorCounter = {0};
+    private Integer[] playErrorCounter = {0};
+    private Integer[] setSpeakerErrorCounter = {0};
+    private Integer[] musicIsReadyErrorCounter = {0};
+    private Integer[] playClientErrorCounter = {0};
+    private Integer[] threadPlayClientErrorCounter = {0};
+
     /*---------------------- TEST------------------------
     View.OnClickListener testStart = new View.OnClickListener() {
         @Override
@@ -77,6 +86,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
+    // TODO (@lima1756): revisar que catches se envian al servidor como una solicitud para reintentar (cuales llevan contador) y cuales solo se informa al usuario
     //SOCKET-IO LISTENERS .........................................
     private Emitter.Listener socketOnSetMusic = new Emitter.Listener() {
         @Override
@@ -100,15 +110,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                         SpeakerPlayingActivity.this.setSongMetadata(artistSong, nameSong); //Cambiar controles
                     }
                 });
+                SpeakerPlayingActivity.this.setMusicErrorCounter[0] = 0;
             }catch (JSONException e){
-                //TODO send error to socket?
-                //TODO or send to slave?
                 SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled"); //Cambiar controles
                     }
                 });
+                // TODO (alex): decidir el mensaje de error para el usuario si se llega a requerir
+                sendServerError(setMusicErrorCounter, "", Constants.SOCKET_EMIT_SET_MUSIC_ERROR);
             }
         }
     };
@@ -122,8 +133,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 tSpk = data.getInt(Constants.SOCKET_PARAM_TYPE_SPEAKER);
                 SpeakerPlayingActivity.this.onSetSpeaker( tSpk);
             }catch (JSONException e){
-                //TODO send error to socket? or send to slave?
                 SpeakerPlayingActivity.this.onSetSpeaker(Constants.EQUALIZER_CENTER_SPEAKER); //Default
+                // TODO (alex): decidir el mensaje de error para el usuario si se llega a requerir
+                sendServerError(playErrorCounter, "", Constants.SOCKET_EMIT_SET_SPEAKER_ERROR);
             }
         }
     };
@@ -147,7 +159,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             }catch (JSONException e){
                 Log.d("PLAY", "error on play");
                 Log.d("PLAY", e.getMessage());
-                //TODO send error to socket? or send to slave?
+                sendServerError(setSpeakerErrorCounter, "", Constants.SOCKET_EMIT_PLAY_ERROR);
             }
         }
     };
@@ -161,12 +173,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            //TODO
-        }
-    };
 
 
 
@@ -189,8 +195,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         app.getSocket().on(Constants.SOCKET_ON_SET_MUSIC, socketOnSetMusic);
         app.getSocket().on(Constants.SOCKET_ON_PLAY, socketOnPlay);
         app.getSocket().on(Socket.EVENT_DISCONNECT,onDisconnect);
-        app.getSocket().on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        app.getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
 
         //--------------------------------------------------------
 
@@ -294,7 +298,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             mp.prepareAsync(); // might take long! (for buffering, etc)
         }catch (IOException e){
             Log.e("SPEAKER_PLAY", e.getMessage()+"hola");
-            sendServerError(ERR_NOT_ABLE_PREPARE_SONG,"ERR_NOT_ABLE_PREPARE_SONG");
+            // TODO (alex): decirle al usuario que hubo un error
         }
     }
 
@@ -302,17 +306,26 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         onPlayInMillisecond(timestamp, 0);
     }
 
-    public void onPlayInMillisecond(long timestamp, int milis) {
+    public void onPlayInMillisecond(final long timestamp, final int milis) {
         this.lastTimestamp = timestamp;
         this.lastMillis = milis;
         Thread startSong;
 
-        if (mp == null) {
-            sendServerError(ERR_NOT_INIT_MEDIA_PLAYER, "ERR_NOT_INIT_MEDIA_PLAYER");
-            return;
-        }
-        if(!isReady){
-            sendServerError(ERR_NOT_ABLE_PREPARE_SONG, "ERR_NOT_ABLE_PREPARE_SONG");
+        if (mp == null  || !isReady) {
+            playClientErrorCounter[0]++;
+            if(playClientErrorCounter[0] == 3)
+            {
+                // TODO (alex): decirle al usuario que hubo un error
+                return;
+            }
+            // TODO (alex): decidir cuanto tiempo es el mejor para esperar
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onPlayInMillisecond(timestamp, milis);
+                }
+            }, 2000);
+            playClientErrorCounter[0] = 0;
             return;
         }
         Log.d("SPEAKER_PLAY", "HOLA");
@@ -332,8 +345,20 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(SLEEP_TIME); // waiting to play sync.
                     }catch (Exception e){
-                        sendServerError(ERR_ASYNC_PLAY,"ERR_ASYNC_PLAY");
-                        //TODO
+                        threadPlayClientErrorCounter[0]++;
+                        if(threadPlayClientErrorCounter[0] == 3)
+                        {
+                            // TODO (alex): decirle al usuario que hubo un error
+                            return;
+                        }
+                        // TODO (alex): decidir cuanto tiempo es el mejor para esperar
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO (alex) decidir como intentar revivir el hilo
+                            }
+                        }, 2000);
+                        threadPlayClientErrorCounter[0] = 0;
                         done = true;
                     }
                 }
@@ -352,8 +377,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         app.getSocket().off("onSetMusic", socketOnSetMusic);
         app.getSocket().off("onPlay", socketOnPlay);
         app.getSocket().off(Socket.EVENT_DISCONNECT,onDisconnect);
-        app.getSocket().off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        app.getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
     }
 
     public void sendMusicIsReadyToServer(){
@@ -362,16 +385,47 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             params.put(Constants.SOCKET_PARAM_READY,true);
             app.getSocket().emit(Constants.SOCKET_EMIT_READY, params);
         }catch (JSONException e){
-            //TODO
+            musicIsReadyErrorCounter[0]++;
+            if(musicIsReadyErrorCounter[0] == 3)
+            {
+                // TODO (alex): decirle al usuario que hubo un error
+                return;
+            }
+            // TODO (alex): decidir cuanto tiempo es el mejor para esperar
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendMusicIsReadyToServer();
+                }
+            }, 2000);
+            musicIsReadyErrorCounter[0] = 0;
         }
         //TEST ---------------------------
         //onPlayInMillisecond(System.currentTimeMillis()+20000, 30000);
         //--------------------------------
     }
 
-    public void sendServerError( int errCode,String err){
-        //TODO SOCKETS
-        Log.e("SPEAKER_PLAY",err);
+
+    private void sendServerError(Integer[] counter, String userMessage, String socketIOEmit){
+        JSONObject params= new JSONObject();
+        try {
+            params.put(Constants.SOCKET_PARAM_READY,true);
+            sendServerError(counter, userMessage, socketIOEmit, params);
+        } catch (JSONException e) {
+            //TODO (alex): decirle al usuario el userMessage
+            return;
+        }
+        counter[0]++;
+    }
+
+    private void sendServerError(Integer counter[], String userMessage, String socketIOEmit, JSONObject params){
+        counter[0]++;
+        if(counter[0] == 3){
+            counter[0] = 0;
+            //TODO (alex): decirle al usuario el userMessage
+            return;
+        }
+        app.getSocket().emit(socketIOEmit, params);
     }
 
     // -----------------------------------------------
