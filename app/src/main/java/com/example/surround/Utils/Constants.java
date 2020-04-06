@@ -24,6 +24,9 @@ public class Constants {
 
     public static final String SOCKET_EMIT_LOGIN_SPEAKER = "login_speaker";
     public static final String SOCKET_EMIT_READY = "speaker_ready";
+    public static final String SOCKET_EMIT_SET_MUSIC_ERROR = "set_music_error";
+    public static final String SOCKET_EMIT_SET_SPEAKER_ERROR = "set_speaker_error";
+    public static final String SOCKET_EMIT_PLAY_ERROR = "play_error";
 
     public static final String SOCKET_ON_PLAY = "play";
     public static final String SOCKET_ON_SET_MUSIC = "set_music";
