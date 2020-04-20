@@ -72,7 +72,11 @@ public class ControllerFragment extends Fragment {
                     new Song(384, R.drawable.summer69, "Summer of 69", "Bryan Adams", 150)
             );
 
-            adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, mListener);
+            controllerArrayList.add(
+                    new Song(105, R.drawable.i_fought_the_law, "I Fought the Law", "The Clash", 125)
+            );
+
+            adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, mListener, getContext());
             //recyclerView.setAdapter(adapter);
 
             if (mColumnCount <= 1) {

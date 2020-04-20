@@ -3,6 +3,7 @@ package com.example.surround;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,10 +28,12 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
 
     private final List<Song> songs;
     private final OnListFragmentInteractionListener mListener;
+    private Context mContext;
 
-    public MyControllerRecyclerViewAdapter(List<Song> items, OnListFragmentInteractionListener listener) {
+    public MyControllerRecyclerViewAdapter(List<Song> items, OnListFragmentInteractionListener listener, Context con) {
         songs = items;
         mListener = listener;
+        mContext = con;
     }
 
     @Override
@@ -58,32 +61,29 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.song);
-                    //fragmentJump(holder.song);
+
+                    fragmentJump(holder.song);
                 }
             }
         });
     }
-/*
+
     private void fragmentJump(Song song) {
         SongFragment songF = new SongFragment(song);
-        Bundle songBundle = new Bundle();
-        songBundle.putParcelable("item_selected_key", mItemSelected);
-        songF.setArguments(songBundle);
-        switchContent(R.id.controllerFrag, songF);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("song", song);
+        songF.setArguments(bundle);
+        switchContent(songF);
     }
 
-    public void switchContent(int id, Fragment songF) {
-        if (mContext == null)
-            return;
-        if (mContext instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) mContext;
-            Fragment frag = fragment;
-            mainActivity.switchContent(id, frag);
-        }
-
+    public void switchContent(Fragment songF) {
+            ControllerMainActivity mainActivity = (ControllerMainActivity)mContext;
+            mainActivity.replaceFragment(songF);
     }
-    
- */
+
+
+
+
 
     @Override
     public int getItemCount() {

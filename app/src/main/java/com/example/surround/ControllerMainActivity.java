@@ -7,9 +7,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 
 public class ControllerMainActivity extends AppCompatActivity implements ControllerFragment.OnListFragmentInteractionListener {
+    public Fragment previousFragment;
     public Fragment currentCentralFragment;
 
     @Override
@@ -25,22 +27,30 @@ public class ControllerMainActivity extends AppCompatActivity implements Control
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if(currentCentralFragment == null || !currentCentralFragment.getClass().equals(f.getClass())){
-            // fragments are from different classes,
-            // different fragments, must change fragment
+            previousFragment = currentCentralFragment;
             currentCentralFragment = f;
             fragmentTransaction.replace(R.id.controller_fragment_container, f);
-            // or ft.add(R.id.your_placeholder, new FooFragment());
-            // Complete the changes added above
             fragmentTransaction.commit();
-        }else if(currentCentralFragment != null &&
+        } else if(currentCentralFragment instanceof ControllerFragment){
+            previousFragment = currentCentralFragment;
+            currentCentralFragment = f;
+            fragmentTransaction.replace(R.id.song_fragment_container, f);
+            fragmentTransaction.commit();
+        } else if(currentCentralFragment != null &&
                 currentCentralFragment.getClass().equals(ControllerFragment.class)){
-                if(currentCentralFragment.getClass().equals(ControllerFragment.class)) {
-                    ((ControllerFragment) currentCentralFragment).scrollToStart();
-                }
-
+            ((ControllerFragment) currentCentralFragment).scrollToStart();
         }
     }
 
+    //Hardware Back Button method
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            replaceFragment(previousFragment);
+            return true;
+        }
+
+        return false;
+    }
 
     @Override
     public void onListFragmentInteraction(Song song){
