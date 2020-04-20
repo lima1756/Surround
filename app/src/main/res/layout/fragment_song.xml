@@ -33,7 +33,7 @@
         app:layout_constraintEnd_toStartOf="@+id/nextIV"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/prevIV"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        app:layout_constraintTop_toBottomOf="@+id/songSB" />
 
     <SeekBar
         android:id="@+id/songSB"
@@ -65,7 +65,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/cardview_light_background"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
+        app:layout_constraintBottom_toTopOf="@+id/songSB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,22 +80,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/seekBar"
+        app:layout_constraintStart_toEndOf="@+id/songSB"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.764" />
 
     <TextView
         android:id="@+id/timeElapsedTV"
-        android:layout_width="18dp"
-        android:layout_height="9dp"
+        android:layout_width="31dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="16dp"
         android:background="@color/cardview_light_background"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar"
+        app:layout_constraintEnd_toStartOf="@+id/songSB"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.764" />
+        app:layout_constraintVertical_bias="0.748" />
 
     <ImageView
         android:id="@+id/prevIV"
@@ -109,7 +110,7 @@
         app:layout_constraintEnd_toStartOf="@+id/playIV"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        app:layout_constraintTop_toBottomOf="@+id/songSB"
         app:layout_constraintVertical_bias="0.029" />
 
     <ImageView
@@ -124,7 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playIV"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        app:layout_constraintTop_toBottomOf="@+id/songSB"
         app:layout_constraintVertical_bias="0.081" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

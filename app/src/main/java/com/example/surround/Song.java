@@ -7,7 +7,7 @@ import android.os.Parcelable;
 public class Song implements Parcelable {
     public int id;
     public int imageRes;
-    public String title, artist;
+    public String title, artist, path = "";
     public int duration;
 
     public Song(int ID, int img, String tit, String art, int dur){
