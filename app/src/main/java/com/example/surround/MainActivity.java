@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     TextView controller, desController, speaker, desSpeaker;
     ImageView ivController, ivSpeaker;
 
-
+    //-----------VIEW LISTENERS--------------------------------------
     View.OnClickListener onClickSpeaker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -27,20 +27,20 @@ public class MainActivity extends AppCompatActivity {
             goToController();
         }
     };
-
+    //---------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setComponents();
     }
 
     private void setComponents(){
         controller = findViewById(R.id.tv_controller);
         desController = findViewById(R.id.tv_des_cont);
-        desSpeaker = findViewById(R.id.tv_des_speaker);
+        desSpeaker = findViewById(R.id.tv_des_sp);
+        desSpeaker.setVisibility(View.VISIBLE);
         speaker = findViewById(R.id.tv_speaker);
 
         ivController = findViewById(R.id.iv_controller);

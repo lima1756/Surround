@@ -10,6 +10,7 @@ import android.os.Bundle;
 public class SplashActivity extends AppCompatActivity {
         private long ms=0;
         private long splashTime=5000;
+        private long sleepTime=100;
         private boolean splashActive = true;
         private boolean paused=false;
         @Override
@@ -21,9 +22,8 @@ public class SplashActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         while (splashActive && ms < splashTime) {
-                            if(!paused)
-                                ms=ms+100;
-                            sleep(100);
+                            if(!paused)  ms+=sleepTime;
+                            sleep(sleepTime);
                         }
                     } catch(Exception e) {}
                     finally {
