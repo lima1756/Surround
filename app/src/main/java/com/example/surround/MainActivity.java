@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.surround.Controller.ControllerMainActivity;
+import com.example.surround.Controller.ControllerActivity;
 import com.example.surround.Speaker.SpeakerMainActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToController(){
-        Intent i = new Intent(this, ControllerMainActivity.class);
+        Intent i = new Intent(this, ControllerActivity.class);
         startActivity(i);
     }
 }

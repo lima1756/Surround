@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Speaker.SpeakerPlayingActivity" />
         <activity android:name=".Speaker.SpeakerMainActivity" />
-        <activity android:name=".Controller.ControllerMainActivity" />
+        <activity android:name=".Controller.ControllerActivity" />
         <activity android:name=".SplashActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

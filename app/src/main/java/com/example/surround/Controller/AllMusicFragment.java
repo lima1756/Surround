@@ -1,7 +1,6 @@
 package com.example.surround.Controller;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,8 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 //import java.sql.SQLOutput;
 import com.android.volley.Request;
@@ -32,13 +29,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 
-public class ControllerFragment extends Fragment {
+public class AllMusicFragment extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Song> controllerArrayList;
-    private MyControllerRecyclerViewAdapter adapter;
+    private AllMusicRecyclerView adapter;
 
 
-    public ControllerFragment() {}
+    public AllMusicFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +45,7 @@ public class ControllerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_controller_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_all_music, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -95,7 +92,7 @@ public class ControllerFragment extends Fragment {
 
             getMusic();
 
-            adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, getContext());
+            adapter = new AllMusicRecyclerView(controllerArrayList, getContext());
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(adapter);
         }

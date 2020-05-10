@@ -14,16 +14,15 @@ import android.widget.TextView;
 
 import com.example.surround.R;
 import com.example.surround.Common.Song;
-import com.example.surround.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
-public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyControllerRecyclerViewAdapter.ViewHolder> {
+public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerView.ViewHolder> {
 
     private final List<Song> songs;
     private Context mContext;
 
-    public MyControllerRecyclerViewAdapter(List<Song> items, Context con) {
+    public AllMusicRecyclerView(List<Song> items, Context con) {
         songs = items;
         mContext = con;
     }
@@ -63,7 +62,7 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
     }
 
     public void switchContent(Fragment songF) {
-            ControllerMainActivity mainActivity = (ControllerMainActivity)mContext;
+            ControllerActivity mainActivity = (ControllerActivity)mContext;
             mainActivity.replaceFragment(songF);
     }
 

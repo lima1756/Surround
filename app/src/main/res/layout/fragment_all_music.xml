@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".Controller.ControllerFragment"
+    tools:context=".Controller.AllMusicFragment"
     tools:itemCount="5"
     tools:listitem="@layout/recycler_view_item"
     android:background="#FF252525"

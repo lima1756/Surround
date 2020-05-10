@@ -5,24 +5,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.example.surround.R;
-import com.example.surround.Common.Song;
 
 
-public class ControllerMainActivity extends AppCompatActivity {
+public class ControllerActivity extends AppCompatActivity {
     public Fragment previousFragment;
     public Fragment currentCentralFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_controller_main);
-        replaceFragment(new ControllerFragment());
+        setContentView(R.layout.activity_controller);
+        replaceFragment(new AllMusicFragment());
     }
 
     public void replaceFragment(Fragment f){
@@ -33,14 +30,14 @@ public class ControllerMainActivity extends AppCompatActivity {
             currentCentralFragment = f;
             fragmentTransaction.replace(R.id.controller_fragment_container, f);
             fragmentTransaction.commit();
-        } else if(currentCentralFragment instanceof ControllerFragment){
+        } else if(currentCentralFragment instanceof AllMusicFragment){
             previousFragment = currentCentralFragment;
             currentCentralFragment = f;
             fragmentTransaction.replace(R.id.song_fragment_container, f);
             fragmentTransaction.commit();
         } else if(currentCentralFragment != null &&
-                currentCentralFragment.getClass().equals(ControllerFragment.class)){
-            ((ControllerFragment) currentCentralFragment).scrollToStart();
+                currentCentralFragment.getClass().equals(AllMusicFragment.class)){
+            ((AllMusicFragment) currentCentralFragment).scrollToStart();
         }
     }
 
