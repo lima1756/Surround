@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+
+import com.example.surround.R;
+import com.example.surround.Common.Song;
 
 
 public class ControllerMainActivity extends AppCompatActivity implements ControllerFragment.OnListFragmentInteractionListener {

@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Speaker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.surround.App.AppSocket;
+import com.example.surround.R;
 import com.example.surround.Utils.Constants;
 import com.github.nkzawa.emitter.Emitter;
 
@@ -91,7 +92,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(SpeakerMainActivity.this,SpeakerPlayingActivity.class);
+            Intent intent = new Intent(SpeakerMainActivity.this, SpeakerPlayingActivity.class);
             setResult(RESULT_OK, intent);
             startActivity(intent);
         }

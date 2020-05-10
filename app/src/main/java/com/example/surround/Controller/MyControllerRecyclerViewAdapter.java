@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Controller;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.surround.ControllerFragment.OnListFragmentInteractionListener;
+import com.example.surround.Controller.ControllerFragment.OnListFragmentInteractionListener;
+import com.example.surround.R;
+import com.example.surround.Common.Song;
 import com.example.surround.dummy.DummyContent.DummyItem;
-
-import org.w3c.dom.ls.LSOutput;
 
 import java.util.List;
 
@@ -49,10 +49,11 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
         //Log.d("image resource", holder.toString());
 
         holder.song = songs.get(position);
-        holder.imgv.setImageResource(songs.get(position).imageRes);
-        holder.titTV.setText(songs.get(position).title);
-        holder.artTV.setText(songs.get(position).artist);
-        holder.durTV.setText(songs.get(position).duration+"");
+        // TODO: change imageview to image from web
+        //holder.imgv.setImageResource(songs.get(position).getImageRes());
+        holder.titTV.setText(songs.get(position).getTitle());
+        holder.artTV.setText(songs.get(position).getArtist());
+        holder.durTV.setText(songs.get(position).getDuration()+"");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

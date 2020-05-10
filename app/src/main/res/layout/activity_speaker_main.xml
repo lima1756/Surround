@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".SpeakerMainActivity">
+    tools:context=".Speaker.SpeakerMainActivity">
 
     <TextView
         android:id="@+id/tv_insert_token"

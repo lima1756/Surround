@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".ControllerMainActivity">
+    tools:context=".Controller.ControllerMainActivity">
 
     <FrameLayout
         android:id="@+id/controller_fragment_container"
@@ -17,7 +17,7 @@
 
         <fragment
             android:id="@+id/controllerFrag"
-            android:name="com.example.surround.ControllerFragment"
+            android:name="com.example.surround.Controller.ControllerFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FF252525"

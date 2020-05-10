@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Speaker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.surround.App.AppSocket;
+import com.example.surround.MainActivity;
+import com.example.surround.R;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.MyEqualizer;
 import com.github.nkzawa.emitter.Emitter;

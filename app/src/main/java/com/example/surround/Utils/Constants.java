@@ -3,6 +3,7 @@ package com.example.surround.Utils;
 
 public class Constants {
     public static final String SERVER_URL = "https://surround-music.herokuapp.com";
+    public static final String SERVER_GET_ALL_MUSIC = "/api/music/all";
     public static final String SERVER_GET_MUSIC_URL ="/api/music/song";
 
     public static final int EQUALIZER_SUBWOOFER_SPEAKER =3;

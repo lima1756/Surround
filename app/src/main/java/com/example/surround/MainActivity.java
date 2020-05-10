@@ -1,17 +1,15 @@
 package com.example.surround;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.surround.Controller.ControllerMainActivity;
+import com.example.surround.Speaker.SpeakerMainActivity;
 
 public class MainActivity extends AppCompatActivity {
 
