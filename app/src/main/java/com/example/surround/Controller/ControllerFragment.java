@@ -31,27 +31,12 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
+
 public class ControllerFragment extends Fragment {
     private RecyclerView recyclerView;
-    private ImageView imageView;
-    private TextView title;
-    private TextView artist;
-    private TextView duration;
     private ArrayList<Song> controllerArrayList;
     private MyControllerRecyclerViewAdapter adapter;
 
-    private OnListFragmentInteractionListener mListener;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
 
     public ControllerFragment() {}
 
@@ -69,12 +54,7 @@ public class ControllerFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            imageView = view.findViewById(R.id.imgView);
-            title = view.findViewById(R.id.titleTV);
-            artist = view.findViewById(R.id.artistTV);
-            duration = view.findViewById(R.id.durationTV);
             controllerArrayList = new ArrayList<>();
-            //Icon i = new Icon(R.drawable.summer69);
 
             controllerArrayList.add(
                     new Song("384", "", "Summer of 69", "Bryan Adams", 150)
@@ -115,9 +95,7 @@ public class ControllerFragment extends Fragment {
 
             getMusic();
 
-            adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, mListener, getContext());
-            //recyclerView.setAdapter(adapter);
-
+            adapter = new MyControllerRecyclerViewAdapter(controllerArrayList, getContext());
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(adapter);
         }
@@ -125,44 +103,10 @@ public class ControllerFragment extends Fragment {
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     public void scrollToStart(){
         recyclerView.scrollToPosition(0);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Song song);
-
-        void onFragmentInteraction(Uri uri);
-    }
 
     private void getMusic() {
         RequestQueue queue = Volley.newRequestQueue(this.getContext());

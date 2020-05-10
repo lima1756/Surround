@@ -7,13 +7,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.example.surround.R;
 import com.example.surround.Common.Song;
 
 
-public class ControllerMainActivity extends AppCompatActivity implements ControllerFragment.OnListFragmentInteractionListener {
+public class ControllerMainActivity extends AppCompatActivity {
     public Fragment previousFragment;
     public Fragment currentCentralFragment;
 
@@ -21,12 +22,12 @@ public class ControllerMainActivity extends AppCompatActivity implements Control
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller_main);
+        replaceFragment(new ControllerFragment());
     }
 
     public void replaceFragment(Fragment f){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         if(currentCentralFragment == null || !currentCentralFragment.getClass().equals(f.getClass())){
             previousFragment = currentCentralFragment;
             currentCentralFragment = f;
@@ -52,15 +53,4 @@ public class ControllerMainActivity extends AppCompatActivity implements Control
 
         return false;
     }
-
-    @Override
-    public void onListFragmentInteraction(Song song){
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri){
-
-    }
-
 }
