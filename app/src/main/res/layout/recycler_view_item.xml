@@ -63,7 +63,8 @@
         app:layout_constraintTop_toTopOf="@+id/imgView"
         app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@color/colorSubTitle"
-        app:autoSizeTextType="uniform"/>
+        app:autoSizeTextType="uniform"
+        android:layout_marginEnd="3dp"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

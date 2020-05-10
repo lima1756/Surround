@@ -53,41 +53,8 @@ public class AllMusicFragment extends Fragment {
             recyclerView = (RecyclerView) view;
             controllerArrayList = new ArrayList<>();
 
-            controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );
-            controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
-            );controllerArrayList.add(
-                    new Song("384", "", "Summer of 69", "Bryan Adams", 150)
+           controllerArrayList.add(
+                    new Song("384", "", "Test", "default", 1500)
             );
 
             getMusic();
