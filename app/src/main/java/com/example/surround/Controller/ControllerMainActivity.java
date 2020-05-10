@@ -21,8 +21,6 @@ public class ControllerMainActivity extends AppCompatActivity implements Control
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller_main);
-
-        replaceFragment(new ControllerFragment());
     }
 
     public void replaceFragment(Fragment f){
