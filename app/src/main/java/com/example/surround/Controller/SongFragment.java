@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.surround.Common.Song;
 import com.example.surround.R;
 
@@ -61,8 +62,11 @@ public class SongFragment extends Fragment {
         next = (ImageView)view.findViewById(R.id.nextIV);
         play = (ImageView)view.findViewById(R.id.playIV);
 
-        // TODO: change imageview to image from web
-        //songIcon.setImageResource(currentSong.imageRes);
+        Glide.with(getContext())
+                .load(currentSong.getImageRes())
+                .placeholder(R.drawable.vinil)
+                .fitCenter()
+                .into(songIcon);
         songTitle.setText(currentSong.getTitle());
         songArtist.setText(currentSong.getArtist());
         songDuration.setText(toMinutes(currentSong.getDuration()));

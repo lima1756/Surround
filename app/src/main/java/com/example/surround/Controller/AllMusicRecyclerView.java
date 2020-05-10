@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.surround.R;
 import com.example.surround.Common.Song;
 
@@ -40,7 +41,12 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
 
         holder.song = songs.get(position);
         // TODO: change imageview to image from web
-        //holder.imgv.setImageResource(songs.get(position).getImageRes());
+        //.setImageResource(songs.get(position).getImageRes());
+        Glide.with(mContext)
+                .load(songs.get(position).getImageRes())
+                .placeholder(R.drawable.vinil)
+                .fitCenter()
+                .into(holder.imgv);
         holder.titTV.setText(songs.get(position).getTitle());
         holder.artTV.setText(songs.get(position).getArtist());
         holder.durTV.setText(songs.get(position).getDuration()+"");

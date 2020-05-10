@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
-        android:textColor="#ffffff"
+        android:textColor="@color/colorTitle"
         android:textSize="20sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintStart_toEndOf="@+id/imgView"
@@ -47,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         app:autoSizeTextType="uniform"
+        android:textColor="@color/colorSubTitle"
         app:layout_constraintBottom_toBottomOf="@+id/imgView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -61,6 +62,7 @@
         tools:text="@tools:sample/date/hhmm"
         app:layout_constraintTop_toTopOf="@+id/imgView"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/colorSubTitle"
         app:autoSizeTextType="uniform"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
