@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Controller;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,27 +12,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.surround.ControllerFragment.OnListFragmentInteractionListener;
-import com.example.surround.dummy.DummyContent.DummyItem;
-
-import org.w3c.dom.ls.LSOutput;
+import com.bumptech.glide.Glide;
+import com.example.surround.R;
+import com.example.surround.Utils.Song;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
-public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyControllerRecyclerViewAdapter.ViewHolder> {
+public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerView.ViewHolder> {
 
     private final List<Song> songs;
-    private final OnListFragmentInteractionListener mListener;
     private Context mContext;
 
-    public MyControllerRecyclerViewAdapter(List<Song> items, OnListFragmentInteractionListener listener, Context con) {
+    public AllMusicRecyclerView(List<Song> items, Context con) {
         songs = items;
-        mListener = listener;
         mContext = con;
     }
 
@@ -46,24 +38,23 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //Log.d("image resource", holder.toString());
 
         holder.song = songs.get(position);
-        holder.imgv.setImageResource(songs.get(position).imageRes);
-        holder.titTV.setText(songs.get(position).title);
-        holder.artTV.setText(songs.get(position).artist);
-        holder.durTV.setText(songs.get(position).duration+"");
+        // TODO: change imageview to image from web
+        //.setImageResource(songs.get(position).getImageRes());
+        Glide.with(mContext)
+                .load(songs.get(position).getImageRes())
+                .placeholder(R.drawable.vinil)
+                .fitCenter()
+                .into(holder.imgv);
+        holder.titTV.setText(songs.get(position).getTitle());
+        holder.artTV.setText(songs.get(position).getArtist());
+        holder.durTV.setText(songs.get(position).getDuration()+"");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mListener != null) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.song);
-
-                    fragmentJump(holder.song);
-                }
+                fragmentJump(holder.song);
             }
         });
     }
@@ -77,13 +68,9 @@ public class MyControllerRecyclerViewAdapter extends RecyclerView.Adapter<MyCont
     }
 
     public void switchContent(Fragment songF) {
-            ControllerMainActivity mainActivity = (ControllerMainActivity)mContext;
+            ControllerActivity mainActivity = (ControllerActivity)mContext;
             mainActivity.replaceFragment(songF);
     }
-
-
-
-
 
     @Override
     public int getItemCount() {

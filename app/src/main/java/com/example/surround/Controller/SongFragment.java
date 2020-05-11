@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Controller;
 
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.bumptech.glide.Glide;
+import com.example.surround.Utils.Song;
+import com.example.surround.R;
 
 
 /**
@@ -60,10 +62,14 @@ public class SongFragment extends Fragment {
         next = (ImageView)view.findViewById(R.id.nextIV);
         play = (ImageView)view.findViewById(R.id.playIV);
 
-        songIcon.setImageResource(currentSong.imageRes);
-        songTitle.setText(currentSong.title);
-        songArtist.setText(currentSong.artist);
-        songDuration.setText(toMinutes(currentSong.duration));
+        Glide.with(getContext())
+                .load(currentSong.getImageRes())
+                .placeholder(R.drawable.vinil)
+                .fitCenter()
+                .into(songIcon);
+        songTitle.setText(currentSong.getTitle());
+        songArtist.setText(currentSong.getArtist());
+        songDuration.setText(toMinutes(currentSong.getDuration()));
 
 
 
@@ -130,7 +136,7 @@ public class SongFragment extends Fragment {
 
                 play.setImageDrawable(ContextCompat.getDrawable(getContext(), android.R.drawable.ic_media_pause));
 
-                AssetFileDescriptor descriptor = getContext().getAssets().openFd(currentSong.path);
+                AssetFileDescriptor descriptor = getContext().getAssets().openFd(currentSong.getPath());
                 mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
                 descriptor.close();
 

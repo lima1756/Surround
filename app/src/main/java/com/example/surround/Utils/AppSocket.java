@@ -1,4 +1,4 @@
-package com.example.surround.App;
+package com.example.surround.Utils;
 
 import com.example.surround.Utils.Constants;
 import com.github.nkzawa.socketio.client.IO;
@@ -10,18 +10,18 @@ import java.net.URISyntaxException;
 
 public class AppSocket extends Application {
     private  Socket mSocket;
-    private static AppSocket app;
 
-    private String sessionToken;
+
+    private String roomToken;
     private String name;
-    private int typeOfSpeaker;
 
-    public String getSessionToken() {
-        return sessionToken;
+
+    public String getRoomToken() {
+        return roomToken;
     }
 
-    public void setSessionToken(String sessionToken) {
-        this.sessionToken = sessionToken;
+    public void setRoomToken(String sessionToken) {
+        this.roomToken = roomToken;
     }
 
     public String getName() {
@@ -32,21 +32,9 @@ public class AppSocket extends Application {
         this.name = name;
     }
 
-    public int getTypeOfSpeaker() {
-        return typeOfSpeaker;
-    }
 
-    public void setTypeOfSpeaker(int typeOfSpeaker) {
-        this.typeOfSpeaker = typeOfSpeaker;
-    }
+    protected AppSocket(){
 
-
-    public  static AppSocket getInstance() {
-        if (app==null) app = new AppSocket();
-        return app;
-    }
-    private AppSocket(){
-        typeOfSpeaker = Constants.EQUALIZER_CENTER_SPEAKER;
         try {
             mSocket = IO.socket(Constants.SERVER_URL);
         } catch (URISyntaxException e) {

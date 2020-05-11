@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Speaker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,9 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.surround.App.AppSocket;
+import com.example.surround.Speaker.Utils.SpeakerSocket;
+import com.example.surround.MainActivity;
+import com.example.surround.R;
 import com.example.surround.Utils.Constants;
-import com.example.surround.Utils.MyEqualizer;
+import com.example.surround.Speaker.Utils.MyEqualizer;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -47,7 +49,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     long lastTimestamp ;
     int lastMillis;
     MyEqualizer myEq;
-    AppSocket app;
+    SpeakerSocket app;
 
     // ERROR COUNTERS ---------------------------
     private Integer[] setMusicErrorCounter = {0};
@@ -187,7 +189,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         isPlaying = false;
         isReady = false;
 
-        app = AppSocket.getInstance();
+        app = SpeakerSocket.getInstance();
         //SOCKET LISTENERS --------------------------------------
 
         app.getSocket().on(Constants.SOCKET_ON_SET_SPEAKER, socketOnSetSpeaker);

@@ -1,4 +1,4 @@
-package com.example.surround;
+package com.example.surround.Speaker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,7 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.surround.App.AppSocket;
+import com.example.surround.R;
+import com.example.surround.Speaker.Utils.SpeakerSocket;
 import com.example.surround.Utils.Constants;
 import com.github.nkzawa.emitter.Emitter;
 
@@ -23,7 +24,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
 
     EditText etToken, etName;
     TextView tvName, tvToken, tvConnecting;
-    AppSocket app;
+    SpeakerSocket app;
     String sessionToken, name;
 
     TextView.OnEditorActionListener  onEnterToken = new TextView.OnEditorActionListener() {
@@ -82,16 +83,16 @@ public class SpeakerMainActivity extends AppCompatActivity {
             int typeOfSpeaker;
             try {
                 typeOfSpeaker = data.getInt(Constants.SOCKET_PARAM_TYPE_SPEAKER);
-                if(app==null) app = AppSocket.getInstance();
+                if(app==null) app = SpeakerSocket.getInstance();
                 app.setName(SpeakerMainActivity.this.name);
-                app.setSessionToken(SpeakerMainActivity.this.sessionToken);
+                app.setRoomToken(SpeakerMainActivity.this.sessionToken);
                 app.setTypeOfSpeaker(typeOfSpeaker);
             } catch (JSONException e) {
                 Log.d("LOGIN", "login failed ");
                 return;
             }
 
-            Intent intent = new Intent(SpeakerMainActivity.this,SpeakerPlayingActivity.class);
+            Intent intent = new Intent(SpeakerMainActivity.this, SpeakerPlayingActivity.class);
             setResult(RESULT_OK, intent);
             startActivity(intent);
         }
@@ -102,7 +103,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speaker_main);
-        app = AppSocket.getInstance();
+        app = SpeakerSocket.getInstance();
         setComponents();
         app.getSocket().on(Constants.SOCKET_ON_LOGIN_RESPONSE, socketOnLogin);
         if(!app.getSocket().connected()) app.getSocket().connect();
