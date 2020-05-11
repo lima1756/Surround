@@ -25,14 +25,14 @@ import com.example.surround.R;
  * A simple {@link Fragment} subclass.
  */
 public class SongFragment extends Fragment {
-    public Song currentSong;
-    public ImageView songIcon, play, prev, next;
-    public TextView songTitle, songArtist, songDuration, songTimeElapsed;
-    public MediaPlayer mediaPlayer;
-    public SeekBar songPlaying;
-    public boolean wasPlaying = false;
+    private Song currentSong;
+    private ImageView songIcon, play, prev, next;
+    private TextView songTitle, songArtist, songDuration, songTimeElapsed;
+    private MediaPlayer mediaPlayer;
+    private SeekBar songPlaying;
+    private boolean wasPlaying = false;
 
-    public SongFragment(Song song) { this.currentSong = song; }
+    SongFragment(Song song) { this.currentSong = song; }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,17 +50,16 @@ public class SongFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        songIcon = (ImageView)view.findViewById(R.id.songImageIV);
-        songTitle = (TextView)view.findViewById(R.id.songTitleTV);
-        songArtist = (TextView)view.findViewById(R.id.songArtistTV);
-        songDuration = (TextView)view.findViewById(R.id.durationTV);
-        songTimeElapsed = (TextView)view.findViewById(R.id.timeElapsedTV);
-        songPlaying = (SeekBar)view.findViewById(R.id.songSB);
+        songIcon = view.findViewById(R.id.songImageIV);
+        songTitle = view.findViewById(R.id.songTitleTV);
+        songArtist = view.findViewById(R.id.songArtistTV);
+        songDuration = view.findViewById(R.id.durationTV);
+        songTimeElapsed = view.findViewById(R.id.timeElapsedTV);
+        songPlaying = view.findViewById(R.id.songSB);
 
-        //mediaPlayer = MediaPlayer.create(getContext(), );
-        prev = (ImageView)view.findViewById(R.id.prevIV);
-        next = (ImageView)view.findViewById(R.id.nextIV);
-        play = (ImageView)view.findViewById(R.id.playIV);
+        prev = view.findViewById(R.id.prevIV);
+        next = view.findViewById(R.id.nextIV);
+        play = view.findViewById(R.id.playIV);
 
         Glide.with(getContext())
                 .load(currentSong.getImageRes())
