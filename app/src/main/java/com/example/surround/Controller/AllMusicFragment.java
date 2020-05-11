@@ -57,6 +57,8 @@ public class AllMusicFragment extends Fragment {
                     new Song("384", "", "Test", "default", 1500)
             );
 
+
+
             getMusic();
 
             adapter = new AllMusicRecyclerView(controllerArrayList, getContext());

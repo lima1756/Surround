@@ -88,7 +88,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
-    // TODO (@lima1756): revisar que catches se envian al servidor como una solicitud para reintentar (cuales llevan contador) y cuales solo se informa al usuario
     //SOCKET-IO LISTENERS .........................................
     private Emitter.Listener socketOnSetMusic = new Emitter.Listener() {
         @Override

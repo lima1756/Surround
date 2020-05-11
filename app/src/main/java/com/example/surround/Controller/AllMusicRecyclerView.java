@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.example.surround.R;
 import com.example.surround.Utils.Song;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerView.ViewHolder> {
@@ -23,11 +25,12 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
     private final List<Song> songs;
     private Context mContext;
 
-    public AllMusicRecyclerView(List<Song> items, Context con) {
+    AllMusicRecyclerView(List<Song> items, Context con) {
         songs = items;
         mContext = con;
     }
 
+    @NotNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -67,9 +70,9 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
         switchContent(songF);
     }
 
-    public void switchContent(Fragment songF) {
+    private void switchContent(Fragment songF) {
             ControllerActivity mainActivity = (ControllerActivity)mContext;
-            mainActivity.replaceFragment(songF);
+            mainActivity.pushFragment(songF);
     }
 
     @Override
@@ -78,14 +81,14 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView imgv;
-        public final TextView titTV;
-        public final TextView artTV;
-        public final TextView durTV;
-        public Song song;
+        final View mView;
+        final ImageView imgv;
+        final TextView titTV;
+        final TextView artTV;
+        final TextView durTV;
+        Song song;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             Log.d("Se creo el mView", mView.toString());
@@ -95,6 +98,7 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
             durTV= (TextView) view.findViewById(R.id.durationTV);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return super.toString() +
