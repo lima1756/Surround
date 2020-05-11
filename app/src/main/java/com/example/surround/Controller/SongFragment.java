@@ -17,7 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.surround.Common.Song;
+import com.example.surround.Utils.Song;
 import com.example.surround.R;
 
 

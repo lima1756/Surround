@@ -20,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.surround.R;
-import com.example.surround.Common.Song;
+import com.example.surround.Utils.Song;
 import com.example.surround.Utils.Constants;
 
 import org.json.JSONArray;

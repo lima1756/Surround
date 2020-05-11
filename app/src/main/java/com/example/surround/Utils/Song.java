@@ -1,4 +1,4 @@
-package com.example.surround.Common;
+package com.example.surround.Utils;
 
 import android.os.Parcel;
 import android.os.Parcelable;
