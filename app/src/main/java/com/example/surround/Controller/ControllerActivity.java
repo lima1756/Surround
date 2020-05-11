@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import com.example.surround.Controller.Utils.ControllerSocket;
 import com.example.surround.MainActivity;
 import com.example.surround.R;
 import com.google.android.material.appbar.AppBarLayout;
@@ -22,18 +23,21 @@ public class ControllerActivity extends AppCompatActivity {
     private Fragment currentCentralFragment;
 
     private MaterialToolbar topAppBar;
+    private ControllerSocket app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller);
         replaceFragment(new AllMusicFragment());
+        app = ControllerSocket.getInstance();
 
         topAppBar = findViewById(R.id.topAppBar);
         topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.close){
+                    app.getSocket().disconnect();
                     Intent intent = new Intent(ControllerActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

@@ -15,7 +15,7 @@ public class Constants {
     public static final int EQUALIZER_RIGHT_SPEAKER =5;
     public static final int EQUALIZER_BACK_RIGHT_SPEAKER =7;
 
-    //SOCKETS PARAMS
+    //SOCKETS SPEAKER
     public static final String SOCKET_PARAM_TYPE_SPEAKER = "type_speaker";
     public static final String SOCKET_PARAM_SONG_ID = "song_id";
     public static final String SOCKET_PARAM_SONG_ARTIST= "song_artist";
@@ -40,5 +40,9 @@ public class Constants {
     public static final String SOCKET_PARAM_ID="id";
     public static final String SOCKET_PARAM_READY="ready";
 
+    //SOCKETS CONTROLLER
+    public static final String SOCKET_EMIT_LOGIN_CONTROLLER = "login_controller";
+    public static final String SOCKET_EMIT_PLAY = "play";
 
+    public static final String SOCKET_PARAM_ROOM = "room";
 }
