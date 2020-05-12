@@ -113,7 +113,7 @@ class Room{
             Logger.Info("Preparing speakers");
             for(const [_id, user] of Object.entries(this.speakers)){
                 user.getSocket().emit<SpeakerPrepareSignal>(SpeakerSignals.SET_MUSIC, {"song_id": song.id, "song_artist": song.artist, "song_name":song.name})
-                Logger.Info("Prepared: " + user.getName());
+                Logger.Info("(prepareSpeakers): Prepared: " + user.getName());
             }  
         })
     }
