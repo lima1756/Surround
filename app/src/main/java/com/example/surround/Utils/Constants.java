@@ -4,7 +4,7 @@ package com.example.surround.Utils;
 public class Constants {
     public static final String SERVER_URL = "https://surround-music.herokuapp.com";
     public static final String SERVER_GET_ALL_MUSIC = "/api/music/all";
-    public static final String SERVER_GET_MUSIC_URL ="/api/music/song";
+    public static final String SERVER_GET_MUSIC_URL ="/api/music/song/";
 
     public static final int EQUALIZER_SUBWOOFER_SPEAKER =3;
     public static final int EQUALIZER_CENTER_SPEAKER =2;
@@ -43,6 +43,12 @@ public class Constants {
     //SOCKETS CONTROLLER
     public static final String SOCKET_EMIT_LOGIN_CONTROLLER = "login_controller";
     public static final String SOCKET_EMIT_PLAY = "play";
+    public static final String SOCKET_EMIT_STOP = "stop";
+
+    public static final String SOCKET_ON_STOP_MUSIC_RESPONSE = "stop_response";
+    public static final String SOCKET_ON_PLAY_MUSIC_RESPONSE = "play_response";
 
     public static final String SOCKET_PARAM_ROOM = "room";
+    public static final String SOCKET_PARAM_OK = "ok";
+    public static final String SOCKET_PARAM_ERROR = "error";
 }
