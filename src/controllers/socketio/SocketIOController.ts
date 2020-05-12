@@ -55,10 +55,10 @@ class SocketIOController {
 
             socket.on(SpeakerSignals.READY, (data : SpeakerReadyRequest) => {
                 user.setStatus(UserStatus.READY);
-                Logger.Info("Speaker ready: " + user.getName());
+                Logger.Info("ON READY: Speaker ready: " + user.getName());
                 const room = this.rooms[user.getRoomID()];
                 if(room && room.speakersReady()){
-                    Logger.Info("Speaker ready: "+user.getName());
+                    Logger.Info("ON READY: Speaker ready: "+user.getName());
                     room.playSpeakers();
                 }
             });

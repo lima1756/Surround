@@ -83,12 +83,12 @@ class Room{
     public speakersReady(): boolean {
         for(const [_id, user] of Object.entries(this.speakers)){
             if(user.getStatus() != UserStatus.READY){
-                Logger.Info("Speakers NOT ready: " + user.getName());
+                Logger.Info("SPEAKERS READY(): Speakers NOT ready: " + user.getName());
                 return false;
             }
-            Logger.Info("Speaker ready: " + user.getName());
+            Logger.Info("SPEAKERS READY(): Speaker ready: " + user.getName());
         }
-        Logger.Info("Speakers ready: TRUE");
+        Logger.Info("SPEAKERS READY(): Speakers ready: TRUE");
         return true;
     }
 
