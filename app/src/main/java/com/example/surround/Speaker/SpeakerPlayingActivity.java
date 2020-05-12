@@ -88,7 +88,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         }
     };
 
-    // TODO (@lima1756): revisar que catches se envian al servidor como una solicitud para reintentar (cuales llevan contador) y cuales solo se informa al usuario
     //SOCKET-IO LISTENERS .........................................
     private Emitter.Listener socketOnSetMusic = new Emitter.Listener() {
         @Override
@@ -101,6 +100,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 }
             });
             try {
+                Log.d("SPEAKER_PLAY", "preparing");
                 id = data.getString(Constants.SOCKET_PARAM_SONG_ID);
                 artistSong = data.getString(Constants.SOCKET_PARAM_SONG_ARTIST);
                 nameSong = data.getString(Constants.SOCKET_PARAM_SONG_NAME);
@@ -151,16 +151,16 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         @Override
         public void call(final Object... args) {
             int millis;long timestamp;
-            Log.d("ON_PLAY", "got signal from server");
+            Log.d("SPEAKER_PLAY", "got signal from server");
             JSONObject data = (JSONObject) args[0];
             try{
                 millis = data.getInt(Constants.SOCKET_PARAM_MILLIS_PLAY);
                 timestamp = data.getLong(Constants.SOCKET_PARAM_TIMESTAMP_PLAY);
-                Log.d("ON_PLAY", "timestamp:"+ timestamp);
+                Log.d("SPEAKER_PLAY", "timestamp:"+ timestamp);
                 SpeakerPlayingActivity.this.onPlayInMillisecond(timestamp,millis);
             }catch (JSONException e){
-                Log.d("PLAY", "error on play");
-                Log.d("PLAY", e.getMessage());
+                Log.d("SPEAKER_PLAY", "error on play");
+                Log.d("SPEAKER_PLAY", e.getMessage());
                 sendServerError(setSpeakerErrorCounter, "", Constants.SOCKET_EMIT_PLAY_ERROR);
             }
         }
@@ -294,6 +294,14 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
         mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mp.setOnPreparedListener(readyToPlay);
+        mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                Log.e("SPEAKER_PLAY", "error code: " + i);
+                Log.e("SPEAKER_PLAY", "error extra: " + i1);
+                return false;
+            }
+        });
         try{
             String url = Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL +id;
             mp.setDataSource(url);

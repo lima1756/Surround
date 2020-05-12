@@ -20,7 +20,7 @@ public class AppSocket extends Application {
         return roomToken;
     }
 
-    public void setRoomToken(String sessionToken) {
+    public void setRoomToken(String roomToken) {
         this.roomToken = roomToken;
     }
 
