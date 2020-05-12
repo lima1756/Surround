@@ -120,10 +120,10 @@ class SocketIOController {
                 socket.emit<OkResponse>(ControllerSignals.CONFIGURE_SPEAKER_RESPONSE,  {"ok":true});
             })
 
-            socket.on(ControllerSignals.STOP_MUSIC, (data: ControllerConfigurationRequest) => {
+            socket.on(ControllerSignals.STOP_MUSIC, (data: any) => {
                 const room = this.rooms[user.getRoomID()];
                 if(!room){
-                    socket.emit(ControllerSignals.CONFIGURE_SPEAKER, {"error": "Selected room doesn't exist."});
+                    socket.emit(ControllerSignals.STOP_MUSIC_RESPONSE, {"error": "Selected room doesn't exist."});
                     return;
                 }
                 room.stopSpeakers();
