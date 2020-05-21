@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.surround.Controller.Utils.ControllerSocket;
+import com.example.surround.Controller.Utils.SongListener;
+import com.example.surround.Speaker.SpeakerPlayingActivity;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.Song;
 import com.example.surround.R;
@@ -29,11 +31,13 @@ import com.github.nkzawa.emitter.Emitter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SongFragment extends Fragment {
+public class SongFragment extends Fragment implements SongListener {
     private Song currentSong;
     private ImageView songIcon, playBtn, prevBtn, nextBtn;
     private TextView songTitle, songArtist, songDuration, songTimeElapsed;
@@ -43,6 +47,8 @@ public class SongFragment extends Fragment {
     private ControllerSocket app;
     private int playEmitterErrorCounter = 0;
     private int milisSong;
+    private ArrayList<Song> songs;
+    private int currentSongIndex;
 
     SongFragment(Song song) { this.currentSong = song; }
 
@@ -63,9 +69,61 @@ public class SongFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        songs = ((ControllerActivity)getActivity()).getSongs();
+        if(songs.size() == 0){
+            ((ControllerActivity)getActivity()).retrieveMusic(this);
+        }
+        for(int i = 0; i < songs.size(); i++){
+            if(songs.get(i).getId().equals(currentSong.getId()))
+            {
+                this.currentSongIndex = i;
+                break;
+            }
+        }
 
         setLayoutComponents(view);
 
+        updateSongMedia();
+
+        emmitPlay(0);
+        isPlaying = true;
+        playBtn.setImageResource( R.drawable.ic_pause_circle);
+
+
+        //Setting Listeners
+        playBtn.setOnClickListener(playListener);
+        sbSongPlaying.setMax(Constants.MAX_PROGRESS_SEEKBAR);
+        sbSongPlaying.setOnSeekBarChangeListener(seekBarListener);
+
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentSongIndex = (currentSongIndex+1) % songs.size();
+                currentSong = songs.get(currentSongIndex);
+                updateSongMedia();
+                emmitPause();
+                emmitPlay(0);
+                playBtn.setImageResource( R.drawable.ic_pause_circle);
+                isPlaying = true;
+            }
+        });
+
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentSongIndex = (currentSongIndex-1) % songs.size();
+                currentSong = songs.get(currentSongIndex);
+                updateSongMedia();
+                emmitPause();
+                emmitPlay(0);
+                playBtn.setImageResource( R.drawable.ic_pause_circle);
+                isPlaying = true;
+            }
+        });
+   }
+
+
+    private void updateSongMedia(){
         Glide.with(getContext())
                 .load(currentSong.getImageRes())
                 .placeholder(R.drawable.vinil)
@@ -74,12 +132,7 @@ public class SongFragment extends Fragment {
         songTitle.setText(currentSong.getTitle());
         songArtist.setText(currentSong.getArtist());
         songDuration.setText(toMinutes(currentSong.getDuration()));
-
-        //Setting Listeners
-        playBtn.setOnClickListener(playListener);
-        sbSongPlaying.setMax(Constants.MAX_PROGRESS_SEEKBAR);
-        sbSongPlaying.setOnSeekBarChangeListener(seekBarListener);
-   }
+    }
 
    private void setLayoutComponents(View view){
        songIcon = view.findViewById(R.id.songImageIV);
@@ -96,17 +149,10 @@ public class SongFragment extends Fragment {
        songTimeElapsed.setVisibility(View.VISIBLE);
    }
 
-    public void previous(View view){
 
-    }
-
-    public void next(View view) {
-
-    }
-
-    private void updateMillisSong(){
-        if(sbSongPlaying==null) return;
-        milisSong = (currentSong.getDuration()*sbSongPlaying.getProgress())/Constants.MAX_PROGRESS_SEEKBAR;
+    private void updateMillisSong() {
+        if (sbSongPlaying == null) return;
+        milisSong = (currentSong.getDuration() * sbSongPlaying.getProgress()) / Constants.MAX_PROGRESS_SEEKBAR;
     }
 
     private String toMinutes(int songDuration){
@@ -256,5 +302,11 @@ public class SongFragment extends Fragment {
 
     private void emmitPause(){
         app.getSocket().emit(Constants.SOCKET_EMIT_STOP, new JSONObject());
+    }
+
+    @Override
+    public void updateSongs(ArrayList<Song> songs) {
+        Log.d("FRAGMENT", ""+songs.size());
+        this.songs = songs;
     }
 }

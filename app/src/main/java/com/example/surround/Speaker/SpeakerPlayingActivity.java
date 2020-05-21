@@ -277,13 +277,14 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public void onStopSong(){
         if(mp != null)mp.stop(); //TODO decidir si podremos volvernos a conectar al server a media canción o no.
         isPlaying = false;
+        isReady = false;
     }
 
     public void onSetMusic(String id){
         Log.d("SPEAKER_PLAY", "on get m Is playing: "+ isPlaying + "is ready "+ isReady);
         if(isPlaying)onStopSong();
         if(id==null) return;
-        if(isReady && id.equals(currentSongId)) return;
+        if(isReady) return;
         isReady = false;
         currentSongId = id;
 
