@@ -1,12 +1,12 @@
 package com.example.surround.Controller;
 
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.surround.Controller.Utils.ControllerSocket;
-import com.example.surround.Speaker.SpeakerPlayingActivity;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.Song;
 import com.example.surround.R;
@@ -39,10 +38,11 @@ public class SongFragment extends Fragment {
     private ImageView songIcon, playBtn, prevBtn, nextBtn;
     private TextView songTitle, songArtist, songDuration, songTimeElapsed;
     private MediaPlayer mediaPlayer;
-    private SeekBar songPlaying;
+    private SeekBar sbSongPlaying;
     private boolean isPlaying = false;
     private ControllerSocket app;
     private int playEmitterErrorCounter = 0;
+    private int milisSong;
 
     SongFragment(Song song) { this.currentSong = song; }
 
@@ -59,20 +59,12 @@ public class SongFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_song, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        songIcon = view.findViewById(R.id.songImageIV);
-        songTitle = view.findViewById(R.id.songTitleTV);
-        songArtist = view.findViewById(R.id.songArtistTV);
-        songDuration = view.findViewById(R.id.durationTV);
-        songTimeElapsed = view.findViewById(R.id.timeElapsedTV);
-        songPlaying = view.findViewById(R.id.songSB);
-
-        prevBtn = view.findViewById(R.id.prevIV);
-        nextBtn = view.findViewById(R.id.nextIV);
-        playBtn = view.findViewById(R.id.playIV);
+        setLayoutComponents(view);
 
         Glide.with(getContext())
                 .load(currentSong.getImageRes())
@@ -83,139 +75,38 @@ public class SongFragment extends Fragment {
         songArtist.setText(currentSong.getArtist());
         songDuration.setText(toMinutes(currentSong.getDuration()));
 
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isPlaying){
-                    emmitPause();
-                    playBtn.setImageResource(R.drawable.ic_play_circle);
-                }
-                else {
-                    emmitPlay();
-                    playBtn.setImageResource( R.drawable.ic_pause_circle);
-                }
-                isPlaying = !isPlaying;
-            }
-        });
+        //Setting Listeners
+        playBtn.setOnClickListener(playListener);
+        sbSongPlaying.setMax(Constants.MAX_PROGRESS_SEEKBAR);
+        sbSongPlaying.setOnSeekBarChangeListener(seekBarListener);
+   }
 
-        // TODO: enable this by changing the socketIO api to let the controller obtain the song
-//        songPlaying.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-//                songTimeElapsed.setVisibility(View.VISIBLE);
-//                int x = (int) Math.ceil(progress / 1000f);
-//
-//                if (x < 10)
-//                    songTimeElapsed.setText("0:0" + x);
-//                else
-//                    songTimeElapsed.setText("0:" + x);
-//
-//                double percent = progress / (double) seekBar.getMax();
-//                int offset = seekBar.getThumbOffset();
-//                int seekWidth = seekBar.getWidth();
-//                int val = (int) Math.round(percent * (seekWidth - 2 * offset));
-//                int labelWidth = songTimeElapsed.getWidth();
-//                songTimeElapsed.setX(offset + seekBar.getX() + val
-//                        - Math.round(percent * offset)
-//                        - Math.round(percent * labelWidth / 2));
-//
-//                if (progress > 0 && mediaPlayer != null && !mediaPlayer.isPlaying()) {
-//                    clearMediaPlayer();
-//                    play.setImageDrawable(ContextCompat.getDrawable(getContext(), android.R.drawable.ic_media_play));
-//                    songPlaying.setProgress(0);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//                    mediaPlayer.seekTo(seekBar.getProgress());
-//                }
-//            }
-//
-//
-//        });
-    }
+   private void setLayoutComponents(View view){
+       songIcon = view.findViewById(R.id.songImageIV);
+       songTitle = view.findViewById(R.id.songTitleTV);
+       songArtist = view.findViewById(R.id.songArtistTV);
+       songDuration = view.findViewById(R.id.durationTV);
+       songTimeElapsed = view.findViewById(R.id.timeElapsedTV);
+       sbSongPlaying = view.findViewById(R.id.songSB);
 
-    public void play(View view){
-        try {
+       prevBtn = view.findViewById(R.id.prevIV);
+       nextBtn = view.findViewById(R.id.nextIV);
+       playBtn = view.findViewById(R.id.playIV);
 
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                clearMediaPlayer();
-                songPlaying.setProgress(0);
-                isPlaying = true;
-                playBtn.setImageDrawable(ContextCompat.getDrawable(getContext(), android.R.drawable.ic_media_play));
-            }
-
-
-            if (!isPlaying) {
-
-                if (mediaPlayer == null) {
-                    mediaPlayer = new MediaPlayer();
-                }
-
-                playBtn.setImageDrawable(ContextCompat.getDrawable(getContext(), android.R.drawable.ic_media_pause));
-
-                AssetFileDescriptor descriptor = getContext().getAssets().openFd(currentSong.getPath());
-                mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-                descriptor.close();
-
-                mediaPlayer.prepare();
-                mediaPlayer.setVolume(0.5f, 0.5f);
-                mediaPlayer.setLooping(false);
-                songPlaying.setMax(mediaPlayer.getDuration());
-
-                mediaPlayer.start();
-                new Thread((Runnable) this).start();
-
-            }
-
-            isPlaying = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
+       songTimeElapsed.setVisibility(View.VISIBLE);
+   }
 
     public void previous(View view){
 
     }
 
-    public void next(View view){
+    public void next(View view) {
 
     }
 
-    private void clearMediaPlayer() {
-        mediaPlayer.stop();
-        mediaPlayer.release();
-        mediaPlayer = null;
-    }
-
-    public void run() {
-
-        int currentPosition = mediaPlayer.getCurrentPosition();
-        int total = mediaPlayer.getDuration();
-
-
-        while (mediaPlayer != null && mediaPlayer.isPlaying() && currentPosition < total) {
-            try {
-                Thread.sleep(1000);
-                currentPosition = mediaPlayer.getCurrentPosition();
-            } catch (InterruptedException e) {
-                return;
-            } catch (Exception e) {
-                return;
-            }
-
-            songPlaying.setProgress(currentPosition);
-
-        }
+    private void updateMillisSong(){
+        if(sbSongPlaying==null) return;
+        milisSong = (currentSong.getDuration()*sbSongPlaying.getProgress())/Constants.MAX_PROGRESS_SEEKBAR;
     }
 
     private String toMinutes(int songDuration){
@@ -228,6 +119,45 @@ public class SongFragment extends Fragment {
         return minutes+":"+seconds;
     }
 
+
+    //LISTENERS ----------------------------------------------
+    View.OnClickListener playListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(isPlaying){
+                emmitPause();
+                playBtn.setImageResource(R.drawable.ic_play_circle);
+            }
+            else {
+                updateMillisSong();
+                emmitPlay(milisSong);
+                playBtn.setImageResource( R.drawable.ic_pause_circle);
+            }
+            isPlaying = !isPlaying;
+        }
+    };
+
+    SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(!fromUser) return;
+            songTimeElapsed.setText(toMinutes(progress));
+            updateMillisSong();
+            if(isPlaying){
+                emmitPlay(milisSong);
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            //TODO is it necessary something here?
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            //TODO is it necessary something here?
+        }
+    };
 
     //SOCKET-IO LISTENERS .........................................
     private Emitter.Listener socketOnStopResponse = new Emitter.Listener() {
@@ -297,10 +227,11 @@ public class SongFragment extends Fragment {
     //SOCKETS-EMITS ------------------------------------------
 
 
-    private void emmitPlay(){
+    private void emmitPlay(final int milis){
         JSONObject params= new JSONObject();
         try{
             params.put(Constants.SOCKET_PARAM_SONG_ID,currentSong.getId());
+            params.put(Constants.SOCKET_PARAM_MILLIS_PLAY, milis);
             app.getSocket().emit(Constants.SOCKET_EMIT_PLAY, params);
         }catch (JSONException e){
             Log.e("SongFragment" ,e.toString());
@@ -314,13 +245,14 @@ public class SongFragment extends Fragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    emmitPlay();
+                    emmitPlay(milis);
                 }
             }, 2000);
             playEmitterErrorCounter = 0;
         }
 
     }
+
 
     private void emmitPause(){
         app.getSocket().emit(Constants.SOCKET_EMIT_STOP, new JSONObject());

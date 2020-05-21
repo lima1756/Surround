@@ -316,6 +316,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         onPlayInMillisecond(timestamp, 0);
     }
 
+
     public void onPlayInMillisecond(final long timestamp, final int milis) {
         this.lastTimestamp = timestamp;
         this.lastMillis = milis;
