@@ -1,6 +1,5 @@
 node_modules
 public/*
-public/songs/*
 public/images/*
 !public/songs/song.mp3
 !public/images/nothing.md
