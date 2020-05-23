@@ -101,6 +101,7 @@ class Room{
             user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": this.timeStart, "millis_play": (this.songStart?this.songStart:0)})
         }
         this.controller.getSocket().emit<ControllerPlaySignal>(ControllerSignals.PLAY_START, {"timestamp": this.timeStart});
+        Logger.Info("Signal sent to controller: " + ControllerSignals.PLAY_START);
     }
 
     public prepareSpeakers(song_id: string, songStartTime: number) {
