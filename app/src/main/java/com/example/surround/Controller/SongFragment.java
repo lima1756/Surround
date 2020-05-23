@@ -1,6 +1,8 @@
 package com.example.surround.Controller;
 
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -22,7 +24,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.surround.Controller.Utils.ControllerSocket;
 import com.example.surround.Controller.Utils.SongListener;
-import com.example.surround.Speaker.SpeakerPlayingActivity;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.Song;
 import com.example.surround.R;
@@ -32,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -83,6 +85,12 @@ public class SongFragment extends Fragment implements SongListener {
 
         setLayoutComponents(view);
 
+        app.getSocket().on(Constants.SOCKET_ON_PLAY_START, socketOnControllerPlayStart);
+        app.getSocket().on(Constants.SOCKET_ON_PLAY_MUSIC_RESPONSE, socketOnPlayResponse);
+
+        app.getSocket().on(Constants.SOCKET_ON_STOP_MUSIC_RESPONSE,socketOnStopResponse);
+        app.getSocket().connect();
+
         updateSongMedia();
 
         emmitPlay(0);
@@ -132,7 +140,20 @@ public class SongFragment extends Fragment implements SongListener {
         songTitle.setText(currentSong.getTitle());
         songArtist.setText(currentSong.getArtist());
         songDuration.setText(toMinutes(currentSong.getDuration()));
+        updateTime();
     }
+
+    private void updateTime(){
+        MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+        Log.d("URI", Uri.parse(Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + currentSong.getId()).toString());
+        mRetriever.setDataSource(Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + currentSong.getId(), new HashMap<String, String>());
+        String s = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        int minutes = (int)Math.floor(Long.parseLong(s)/60000.0);
+        int seconds = (int)Math.floor(Long.parseLong(s)/1000)-(minutes*60);
+        songDuration.setText(minutes+":"+seconds);
+        mRetriever.release();
+    }
+
 
    private void setLayoutComponents(View view){
        songIcon = view.findViewById(R.id.songImageIV);
@@ -213,12 +234,13 @@ public class SongFragment extends Fragment implements SongListener {
             try {
                 if(data.has("error")){
                     String error = data.getString(Constants.SOCKET_PARAM_ERROR);
-                    Log.e("SongFragment" ,error);
+                    Log.e("SONG_FRAGMENT" ,error);
                     // TODO (quien sea): decirle al usuario el error
                 }
+                Log.d("SONG_FRAGMENT" ,data.toString());
 
             }catch (JSONException e){
-                Log.e("SongFragment" ,e.toString());
+                Log.e("SONG_FRAGMENT" ,e.toString());
                 // TODO (quien sea): decirle al usuario que hubo un error
             }
         }
@@ -231,37 +253,36 @@ public class SongFragment extends Fragment implements SongListener {
             try {
                 if(data.has("error")){
                     String error = data.getString(Constants.SOCKET_PARAM_ERROR);
-                    Log.e("SongFragment" ,error);
+                    Log.e("SONG_FRAGMENT" ,error);
                     // TODO (quien sea): decirle al usuario el error
                 }
-
+                Log.d("SONG_FRAGMENT" ,data.toString());
             }catch (JSONException e){
-                Log.e("SongFragment" ,e.toString());
+                Log.e("SONG_FRAGMENT" ,e.toString());
                 // TODO (quien sea): decirle al usuario que hubo un error
             }
         }
     };
 
-    private Emitter.Listener socketOnSpeakerConnected = new Emitter.Listener() {
+    private Emitter.Listener socketOnControllerPlayStart = new Emitter.Listener() {
         @Override
-        public void call(final Object... args) {
+        public void call(Object... args) {
             JSONObject data = (JSONObject) args[0];
+            Log.e("SONG_FRAGMENT" ,data.toString());
             try {
-                Toast.makeText(getContext(), "User: " + data.getString("name")+ "Connected", Toast.LENGTH_LONG).show();
-
-            }catch (JSONException e){
-                Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
-            }
-        }
-    };
-
-    private Emitter.Listener socketOnSpeakerDisconnected = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            JSONObject data = (JSONObject) args[0];
-            try {
-                Toast.makeText(getContext(), "User: " + data.getString("name")+ "Disconnected", Toast.LENGTH_LONG).show();
+                final long timeToStartSeek = data.getLong("timestamp");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            long wait = timeToStartSeek-System.currentTimeMillis();
+                            Thread.sleep(wait);
+                            // TODO: iniciar seekbar para que avance
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
                 // TODO (quien sea): decirle al usuario que hubo un error
@@ -280,7 +301,7 @@ public class SongFragment extends Fragment implements SongListener {
             params.put(Constants.SOCKET_PARAM_MILLIS_PLAY, milis);
             app.getSocket().emit(Constants.SOCKET_EMIT_PLAY, params);
         }catch (JSONException e){
-            Log.e("SongFragment" ,e.toString());
+            Log.e("SONG_FRAGMENT" ,e.toString());
             playEmitterErrorCounter++;
             if(playEmitterErrorCounter == 3)
             {
