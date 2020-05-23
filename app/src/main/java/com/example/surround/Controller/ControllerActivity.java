@@ -11,11 +11,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,11 +33,13 @@ import com.example.surround.MainActivity;
 import com.example.surround.R;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.Song;
+import com.github.nkzawa.emitter.Emitter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -74,6 +80,10 @@ public class ControllerActivity extends AppCompatActivity {
             }
         });
         topAppBar.setTitle("Room: " + ControllerSocket.getInstance().getRoomToken());
+
+        app.getSocket().on(Constants.SOCKET_ON_SPEAKER_CONNECTED, socketOnSpeakerConnected);
+        app.getSocket().on(Constants.SOCKET_ON_SPEAKER_DISCONNECTED, socketOnSpeakerDisconnected);
+        app.getSocket().connect();
     }
 
     public void pushFragment(Fragment f){
@@ -175,5 +185,40 @@ public class ControllerActivity extends AppCompatActivity {
     public ArrayList<Song> getSongs(){
         return this.songList;
     }
+
+    Handler toastHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message message) {
+            Toast.makeText(ControllerActivity.this,  message.obj.toString(), Toast.LENGTH_LONG).show();
+        }
+    };
+
+    private Emitter.Listener socketOnSpeakerConnected = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                Message m = toastHandler.obtainMessage(0,"User: " + data.getString("name") + " Connected");
+                m.sendToTarget();
+            }catch (JSONException e){
+                Log.e("SongFragment" ,e.toString());
+                // TODO (quien sea): decirle al usuario que hubo un error
+            }
+        }
+    };
+
+    private Emitter.Listener socketOnSpeakerDisconnected = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                Message m = toastHandler.obtainMessage(0,"User: " + data.getString("name")+ " Disconnected");
+                m.sendToTarget();
+            }catch (JSONException e){
+                Log.e("SongFragment" ,e.toString());
+                // TODO (quien sea): decirle al usuario que hubo un error
+            }
+        }
+    };
 
 }
