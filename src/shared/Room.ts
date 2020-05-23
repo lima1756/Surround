@@ -33,7 +33,7 @@ class Room{
 
     static genID(): string{
         let id: string = "";
-        for(let i = 0; i < 7; i++){
+        for(let i = 0; i < 4; i++){
             id = id + Room.KEYS[Math.floor(Math.random()*(Room.KEYS.length))];
         }
         return id;
