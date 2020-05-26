@@ -11,18 +11,37 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.surround.Controller.Utils.ControllerSocket;
+import com.example.surround.Controller.Utils.SongListener;
 import com.example.surround.MainActivity;
 import com.example.surround.R;
+import com.example.surround.Utils.Constants;
+import com.example.surround.Utils.Song;
+import com.github.nkzawa.emitter.Emitter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Stack;
 
 
@@ -34,11 +53,13 @@ public class ControllerActivity extends AppCompatActivity {
     private ControllerSocket app;
     private FrameLayout fragmentContainer;
     private CoordinatorLayout.LayoutParams params;
+    private ArrayList<Song> songList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller);
+        songList = new ArrayList<>();
         app = ControllerSocket.getInstance();
         fragmentContainer =  findViewById(R.id.controller_fragment_container);
         params = (CoordinatorLayout.LayoutParams) fragmentContainer.getLayoutParams();
@@ -59,6 +80,10 @@ public class ControllerActivity extends AppCompatActivity {
             }
         });
         topAppBar.setTitle("Room: " + ControllerSocket.getInstance().getRoomToken());
+
+        app.getSocket().on(Constants.SOCKET_ON_SPEAKER_CONNECTED, socketOnSpeakerConnected);
+        app.getSocket().on(Constants.SOCKET_ON_SPEAKER_DISCONNECTED, socketOnSpeakerDisconnected);
+        app.getSocket().connect();
     }
 
     public void pushFragment(Fragment f){
@@ -119,4 +144,81 @@ public class ControllerActivity extends AppCompatActivity {
         }
         return 0;
     }
+
+    public void retrieveMusic(final SongListener songListener) {
+        if(songList.size() > 0){
+            songListener.updateSongs(songList);
+            return;
+        }
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // Request a string response from the provided URL.
+        JsonArrayRequest stringRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                Constants.SERVER_URL+ Constants.SERVER_GET_ALL_MUSIC,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for(int i  = 0; i < response.length(); i++) {
+                            try {
+                                songList.add(Song.CreateFromJSON(response.getJSONObject(i)));
+                            } catch (JSONException err) {
+                                Log.e("MUSIC", err.toString());
+                            }
+                        }
+                        songListener.updateSongs(songList);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("MUSIC", error.toString());
+                    }
+                }
+        );
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public ArrayList<Song> getSongs(){
+        return this.songList;
+    }
+
+    Handler toastHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message message) {
+            Toast.makeText(ControllerActivity.this,  message.obj.toString(), Toast.LENGTH_LONG).show();
+        }
+    };
+
+    private Emitter.Listener socketOnSpeakerConnected = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                Message m = toastHandler.obtainMessage(0,"User: " + data.getString("name") + " Connected");
+                m.sendToTarget();
+            }catch (JSONException e){
+                Log.e("SongFragment" ,e.toString());
+                // TODO (quien sea): decirle al usuario que hubo un error
+            }
+        }
+    };
+
+    private Emitter.Listener socketOnSpeakerDisconnected = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                Message m = toastHandler.obtainMessage(0,"User: " + data.getString("name")+ " Disconnected");
+                m.sendToTarget();
+            }catch (JSONException e){
+                Log.e("SongFragment" ,e.toString());
+                // TODO (quien sea): decirle al usuario que hubo un error
+            }
+        }
+    };
+
 }

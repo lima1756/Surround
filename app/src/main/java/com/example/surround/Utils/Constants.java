@@ -50,6 +50,10 @@ public class Constants {
 
     public static final String SOCKET_ON_STOP_MUSIC_RESPONSE = "stop_response";
     public static final String SOCKET_ON_PLAY_MUSIC_RESPONSE = "play_response";
+    public static final String SOCKET_ON_CONFIGURE_SPEAKER_RESPONSE = "configure_speaker_response";
+    public static final String SOCKET_ON_SPEAKER_DISCONNECTED = "speaker_disconnected";
+    public static final String SOCKET_ON_SPEAKER_CONNECTED = "speaker_connected";
+    public static final String SOCKET_ON_PLAY_START = "play_start";
 
     public static final String SOCKET_PARAM_ROOM = "room";
     public static final String SOCKET_PARAM_OK = "ok";
