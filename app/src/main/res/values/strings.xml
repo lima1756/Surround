@@ -14,8 +14,14 @@
     <string name="wait_controller_2">Waiting for the controller</string>
     <string name="wait_connection">Connecting . . .</string>
 
+    <!-- Mensajes de error -->
+    <string name="error_on_play">Error al reproducir canción</string>
+    <string name="error_connection_generic">Error al intentar conectarse. Reintente</string>
+    <string name="error_user_not_able_conn">Error, un usuario no pudo conectarse.</string>
+    <string name="error_disconnect_speaker">Error, un usuario no pudo desconectarse</string>
+    <string name="error_on_stop_response">Error al enviar Stop. Reintente</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_no_sended_to_server">Error al notificar al server. Compruebe su conexión</string>
+
 
 </resources>

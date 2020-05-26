@@ -168,12 +168,12 @@ public class SongFragment extends Fragment {
                 if(data.has("error")){
                     String error = data.getString(Constants.SOCKET_PARAM_ERROR);
                     Log.e("SongFragment" ,error);
-                    // TODO (quien sea): decirle al usuario el error
+                    Toast.makeText(getContext(),R.string.error_on_stop_response,Toast.LENGTH_LONG).show();
                 }
 
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(getContext(),R.string.error_on_stop_response,Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -186,12 +186,12 @@ public class SongFragment extends Fragment {
                 if(data.has("error")){
                     String error = data.getString(Constants.SOCKET_PARAM_ERROR);
                     Log.e("SongFragment" ,error);
-                    // TODO (quien sea): decirle al usuario el error
+                    Toast.makeText(getContext(),R.string.error_connection_generic,Toast.LENGTH_LONG).show();
                 }
 
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(getContext(),R.string.error_connection_generic,Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -205,7 +205,7 @@ public class SongFragment extends Fragment {
 
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(getContext(),R.string.error_user_not_able_conn,Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -218,7 +218,7 @@ public class SongFragment extends Fragment {
                 Toast.makeText(getContext(), "User: " + data.getString("name")+ "Disconnected", Toast.LENGTH_LONG).show();
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(getContext(),R.string.error_disconnect_speaker,Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -238,7 +238,7 @@ public class SongFragment extends Fragment {
             playEmitterErrorCounter++;
             if(playEmitterErrorCounter == 3)
             {
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(getContext(),R.string.error_connection_generic,Toast.LENGTH_LONG).show();
                 return;
             }
             // TODO (quien sea): decidir cuanto tiempo es el mejor para esperar
@@ -247,7 +247,7 @@ public class SongFragment extends Fragment {
                 public void run() {
                     emmitPlay(milis);
                 }
-            }, 2000);
+            }, 3000);
             playEmitterErrorCounter = 0;
         }
 
