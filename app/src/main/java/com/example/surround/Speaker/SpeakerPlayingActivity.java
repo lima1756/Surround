@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.surround.Speaker.Utils.SpeakerSocket;
 import com.example.surround.MainActivity;
 import com.example.surround.R;
@@ -110,6 +111,11 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         SpeakerPlayingActivity.this.setSongMetadata(artistSong, nameSong); //Cambiar controles
+                        Glide.with(getApplicationContext())
+                                .load("https://surround-music.herokuapp.com/api/music/image/" + currentSongId)
+                                .placeholder(R.drawable.vinil)
+                                .fitCenter()
+                                .into(ivDisk);
                     }
                 });
                 SpeakerPlayingActivity.this.setMusicErrorCounter[0] = 0;
@@ -256,6 +262,12 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
 
         ivDisk = findViewById(R.id.iv_disc);
         ivDisk.setVisibility(View.GONE);
+
+        Glide.with(getApplicationContext())
+                .load("")
+                .placeholder(R.drawable.vinil)
+                .fitCenter()
+                .into(ivDisk);
 
         setSongMetadata("No Artist", "Untitled");
     }
