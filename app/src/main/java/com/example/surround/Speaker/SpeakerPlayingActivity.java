@@ -33,7 +33,8 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public static final int ERR_NOT_ABLE_PREPARE_SONG = 2;
     public static final int ERR_NOT_INIT_MEDIA_PLAYER = 1;
     public static final int ERR_ASYNC_PLAY = 3;
-
+    // TODO (quien sea): decidir cuanto tiempo es el mejor para esperar
+    public static final int WAIT_TIME_RESPONSE = 2000;
 
     public static final int SLEEP_TIME = 50; //milliseconds.
     //Minimum async delta = 2 * SLEEP_TIME
@@ -75,7 +76,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             v.setVisibility(View.GONE);
-            //TODO ADD PLAY BTN?
             onStopSong();
         }
     };
@@ -126,8 +126,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                         SpeakerPlayingActivity.this.setSongMetadata("No artist","Untitled"); //Cambiar controles
                     }
                 });
-                // TODO (alex): decidir el mensaje de error para el usuario si se llega a requerir
-                sendServerError(setMusicErrorCounter, "", Constants.SOCKET_EMIT_SET_MUSIC_ERROR);
+                sendServerError(setMusicErrorCounter, "Music Metadata not found", Constants.SOCKET_EMIT_SET_MUSIC_ERROR);
             }
         }
     };
@@ -142,8 +141,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 SpeakerPlayingActivity.this.onSetSpeaker( tSpk);
             }catch (JSONException e){
                 SpeakerPlayingActivity.this.onSetSpeaker(Constants.EQUALIZER_CENTER_SPEAKER); //Default
-                // TODO (alex): decidir el mensaje de error para el usuario si se llega a requerir
-                sendServerError(playErrorCounter, "", Constants.SOCKET_EMIT_SET_SPEAKER_ERROR);
             }
         }
     };
@@ -320,8 +317,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             mp.setDataSource(url);
             mp.prepareAsync(); // might take long! (for buffering, etc)
         }catch (IOException e){
-            Log.e("SPEAKER_PLAY", e.getMessage()+"hola");
-            // TODO (alex): decirle al usuario que hubo un error
+            Toast.makeText(this, R.string.error_on_play,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -339,16 +335,15 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             playClientErrorCounter[0]++;
             if(playClientErrorCounter[0] == 3)
             {
-                // TODO (alex): decirle al usuario que hubo un error
+                Toast.makeText(this,R.string.error_on_play,Toast.LENGTH_LONG);
                 return;
             }
-            // TODO (alex): decidir cuanto tiempo es el mejor para esperar
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     onPlayInMillisecond(timestamp, milis);
                 }
-            }, 2000);
+            }, WAIT_TIME_RESPONSE);
             playClientErrorCounter[0] = 0;
             return;
         }
@@ -372,16 +367,15 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                         threadPlayClientErrorCounter[0]++;
                         if(threadPlayClientErrorCounter[0] == 3)
                         {
-                            // TODO (alex): decirle al usuario que hubo un error
+                            Toast.makeText(SpeakerPlayingActivity.this,R.string.error_on_play,Toast.LENGTH_LONG).show();
                             return;
                         }
-                        // TODO (alex): decidir cuanto tiempo es el mejor para esperar
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 // TODO (alex) decidir como intentar revivir el hilo
                             }
-                        }, 2000);
+                        }, WAIT_TIME_RESPONSE);
                         threadPlayClientErrorCounter[0] = 0;
                         done = true;
                     }
@@ -412,16 +406,15 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             musicIsReadyErrorCounter[0]++;
             if(musicIsReadyErrorCounter[0] == 3)
             {
-                // TODO (alex): decirle al usuario que hubo un error
+                Toast.makeText(this,R.string.error_no_sended_to_server,Toast.LENGTH_LONG).show();
                 return;
             }
-            // TODO (alex): decidir cuanto tiempo es el mejor para esperar
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     sendMusicIsReadyToServer();
                 }
-            }, 2000);
+            }, WAIT_TIME_RESPONSE);
             musicIsReadyErrorCounter[0] = 0;
         }
         //TEST ---------------------------
@@ -436,7 +429,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             params.put(Constants.SOCKET_PARAM_READY,true);
             sendServerError(counter, userMessage, socketIOEmit, params);
         } catch (JSONException e) {
-            //TODO (alex): decirle al usuario el userMessage
+            Toast.makeText(this,R.string.error_no_sended_to_server,Toast.LENGTH_LONG).show();
             return;
         }
         counter[0]++;
@@ -446,7 +439,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         counter[0]++;
         if(counter[0] == 3){
             counter[0] = 0;
-            //TODO (alex): decirle al usuario el userMessage
+            Toast.makeText(this,R.string.error_connection_generic,Toast.LENGTH_LONG).show();
             return;
         }
         app.getSocket().emit(socketIOEmit, params);
