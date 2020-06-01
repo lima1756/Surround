@@ -202,7 +202,7 @@ public class ControllerActivity extends AppCompatActivity {
                 m.sendToTarget();
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(ControllerActivity.this,R.string.error_connect_speaker , Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -216,7 +216,7 @@ public class ControllerActivity extends AppCompatActivity {
                 m.sendToTarget();
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                // TODO (quien sea): decirle al usuario que hubo un error
+                Toast.makeText(ControllerActivity.this, R.string.error_disconnect_speaker, Toast.LENGTH_LONG).show();
             }
         }
     };

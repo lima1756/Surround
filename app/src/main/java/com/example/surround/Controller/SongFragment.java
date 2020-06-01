@@ -217,12 +217,12 @@ public class SongFragment extends Fragment implements SongListener {
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-            //TODO is it necessary something here?
+            //TODO(alex) is it necessary something here?
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            //TODO is it necessary something here?
+            //TODO(alex) is it necessary something here?
         }
     };
 
@@ -273,7 +273,7 @@ public class SongFragment extends Fragment implements SongListener {
 
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
-                Toast.makeText(getContext(),R.string.error_user_not_able_conn,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),R.string.error_disconnect_speaker,Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -291,7 +291,7 @@ public class SongFragment extends Fragment implements SongListener {
                         try {
                             long wait = timeToStartSeek-System.currentTimeMillis();
                             Thread.sleep(wait);
-                            // TODO: iniciar seekbar para que avance
+                            // TODO(alex): iniciar seekbar para que avance
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -322,7 +322,7 @@ public class SongFragment extends Fragment implements SongListener {
                 Toast.makeText(getContext(),R.string.error_connection_generic,Toast.LENGTH_LONG).show();
                 return;
             }
-            // TODO (quien sea): decidir cuanto tiempo es el mejor para esperar
+            // TODO (ivan): decidir cuanto tiempo es el mejor para esperar
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

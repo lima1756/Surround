@@ -17,7 +17,7 @@
     <!-- Mensajes de error -->
     <string name="error_on_play">Error al reproducir canción</string>
     <string name="error_connection_generic">Error al intentar conectarse. Reintente</string>
-    <string name="error_user_not_able_conn">Error, un usuario no pudo conectarse.</string>
+    <string name="error_connect_speaker">Error, un usuario no pudo conectarse.</string>
     <string name="error_disconnect_speaker">Error, un usuario no pudo desconectarse</string>
     <string name="error_on_stop_response">Error al enviar Stop. Reintente</string>
 
