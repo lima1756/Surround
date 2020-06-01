@@ -322,13 +322,12 @@ public class SongFragment extends Fragment implements SongListener {
                 Toast.makeText(getContext(),R.string.error_connection_generic,Toast.LENGTH_LONG).show();
                 return;
             }
-            // TODO (ivan): decidir cuanto tiempo es el mejor para esperar
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     emmitPlay(milis);
                 }
-            }, 3000);
+            }, 1000);
             playEmitterErrorCounter = 0;
         }
 

@@ -33,8 +33,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     public static final int ERR_NOT_ABLE_PREPARE_SONG = 2;
     public static final int ERR_NOT_INIT_MEDIA_PLAYER = 1;
     public static final int ERR_ASYNC_PLAY = 3;
-    // TODO (ivan ): decidir cuanto tiempo es el mejor para esperar
-    public static final int WAIT_TIME_RESPONSE = 2000;
+    public static final int WAIT_TIME_RESPONSE = 1000;
 
     public static final int SLEEP_TIME = 50; //milliseconds.
     //Minimum async delta = 2 * SLEEP_TIME
@@ -373,7 +372,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                // TODO (ivan) decidir como intentar revivir el hilo
+                                onPlayInMillisecond(timestamp, milis);
                             }
                         }, WAIT_TIME_RESPONSE);
                         threadPlayClientErrorCounter[0] = 0;
