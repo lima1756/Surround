@@ -29,3 +29,7 @@ export interface ControllerSpeakerDisconnected {
     id: string,
     name: string
 }
+
+export interface ControllerPlaySignal{
+    timestamp:number
+}

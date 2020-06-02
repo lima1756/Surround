@@ -7,7 +7,8 @@ import { SpeakerPlaySignal, SpeakerPrepareSignal, SpekerStopSignal } from 'src/t
 import { Logger } from '@overnightjs/logger';
 import ControllerSignals from '../constants/ControllerSignals.enum';
 import { ControllerSpeakerDisconnected } from 'src/types/Controller.types';
-import Song, { SongHelper } from '../models/Song.model';
+import { SongHelper } from '../models/Song.model';
+import {ControllerPlaySignal} from 'src/types/Controller.types';
 
 class Room{
     private controller: User;
@@ -32,7 +33,7 @@ class Room{
 
     static genID(): string{
         let id: string = "";
-        for(let i = 0; i < 7; i++){
+        for(let i = 0; i < 4; i++){
             id = id + Room.KEYS[Math.floor(Math.random()*(Room.KEYS.length))];
         }
         return id;
@@ -99,6 +100,8 @@ class Room{
             Logger.Info("Playing music: " + user.getName());
             user.getSocket().emit<SpeakerPlaySignal>(SpeakerSignals.PLAY, {"timestamp": this.timeStart, "millis_play": (this.songStart?this.songStart:0)})
         }
+        this.controller.getSocket().emit<ControllerPlaySignal>(ControllerSignals.PLAY_START, {"timestamp": this.timeStart});
+        Logger.Info("Signal sent to controller: " + ControllerSignals.PLAY_START);
     }
 
     public prepareSpeakers(song_id: string, songStartTime: number) {
