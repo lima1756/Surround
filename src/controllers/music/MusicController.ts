@@ -113,11 +113,8 @@ async function downloadFile(Bucket: string, Key: string) {
         Key: Key
     };
     const result = await S3
-    .getObject(request)
-    .promise();
-    fs.writeFileSync(path.join(__dirname, `../../../${Key}`), result.Body as any);
-    const file = await fs.createReadStream(`/${Key}`);
-    return file;
+    .getObject(request);
+    return result.createReadStream();
 }
 
 function uploadFile(bucket: string, key: string, data: Buffer){
