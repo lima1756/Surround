@@ -1,10 +1,20 @@
 import { OK, BAD_REQUEST } from 'http-status-codes';
 import { Controller, Get, Post } from '@overnightjs/core';
-import { Logger } from '@overnightjs/logger';
 import { Request, Response } from 'express';
 import fileUpload from 'express-fileupload';
 import path from 'path'
 import Song, {ISong, SongHelper} from '../../models/Song.model';
+import AWS from 'aws-sdk';
+import { PutObjectRequest, GetObjectRequest } from 'aws-sdk/clients/s3';
+import {fs} from 'memfs';
+require('dotenv').config()
+AWS.config.update({
+    region: 'us-west-1',
+    accessKeyId: process.env.AWSAccessKeyId,
+    secretAccessKey: process.env.AWSSecretKey
+});
+const S3 = new AWS.S3();
+
 
 @Controller('api/music')
 class MusicController {
@@ -39,9 +49,14 @@ class MusicController {
 
     @Get('song/:id')
     private async getSong(req: Request, res: Response){
-        try {
+        try {            
             const song = await SongHelper.findById(req.params.id);
-            res.sendFile(path.join(__dirname, '../../../public/songs', song!.songFile));            
+            const exists = fs.existsSync(path.join(__dirname, '../../../public/songs', song!.songFile));
+            if(exists){
+                res.sendFile(path.join(__dirname, '../../../public/songs', song!.songFile));            
+                return;
+            }
+            (await downloadFile(process.env.AWS_BUCKET || "", "public/songs/"+song!.songFile)).pipe(res);
         } catch (err) {
             res.sendStatus(BAD_REQUEST);
         }
@@ -51,7 +66,12 @@ class MusicController {
     private async getImage(req: Request, res: Response){
         try {
             const song = await SongHelper.findById(req.params.id);
-            res.sendFile(path.join(__dirname, '../../../public/images', song!.imgFile));            
+            const exists = fs.existsSync(path.join(__dirname, '../../../public/images', song!.imgFile));
+            if(exists){
+                res.sendFile(path.join(__dirname, '../../../public/images', song!.imgFile));    
+                return;
+            }
+            (await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile)).pipe(res);
         } catch (err) {
             res.sendStatus(BAD_REQUEST);
         }
@@ -73,12 +93,53 @@ class MusicController {
             songFile: songId+"_"+songFile.name
         })
         song.save();
-        imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
-        songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
+        const imgParams : PutObjectRequest = {
+            Bucket: process.env.AWS_BUCKET || "",
+            Body : imgFile,
+            Key : "public/images/"+song.imgFile
+        };
+        const songParams : PutObjectRequest = {
+            Bucket: process.env.AWS_BUCKET  || "",
+            Body : songFile,
+            Key : "public/songs/"+song.songFile
+        };
+
+        S3.upload(imgParams, function (err, data) {
+            if (err) {
+                console.log("Error", err);
+            }            
+            if (data) {
+                console.log("Uploaded in:", data.Location);
+            }
+        });
+        S3.upload(songParams, function (err, data) {
+            if (err) {
+                console.log("Error", err);
+            }
+            if (data) {
+                console.log("Uploaded in:", data.Location);
+            }
+        });
+        // imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
+        // songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
         res.send({
             "id": songId
         });
     }
+}
+
+async function downloadFile(Bucket: string, Key: string) {
+    const request : GetObjectRequest = {
+        Bucket: Bucket,
+        Key: Key
+    };
+    const result = await S3
+    .getObject(request)
+    .promise();
+
+    fs.writeFileSync(`../../../${Key}`, result.Body as any);
+    const file = await fs.createReadStream(`/${Key}`);
+    return file;
 }
 
 export default MusicController;
