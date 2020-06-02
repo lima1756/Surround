@@ -94,6 +94,9 @@ class MusicController {
         })
         await imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
         await songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
+        if(fs.existsSync(path.join(__dirname, '../../../public/songs', song.songFile))){
+            console.log("FILE EXISTS");
+        }
         uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, path.join(__dirname, '../../../public/songs', song.songFile));
         uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, path.join(__dirname, '../../../public/images', song.imgFile));
         song.save();
