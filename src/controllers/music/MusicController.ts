@@ -92,11 +92,12 @@ class MusicController {
             imgFile: songId+"_"+imgFile.name,
             songFile: songId+"_"+songFile.name
         })
-        uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, songFile);
-        uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, imgFile);
+        imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
+        songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
+        uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, path.join(__dirname, '../../../public/songs', song.songFile));
+        uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, path.join(__dirname, '../../../public/images', song.imgFile));
         song.save();
-        // imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
-        // songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
+        
         res.send({
             "id": songId
         });
@@ -117,8 +118,8 @@ async function downloadFile(Bucket: string, Key: string) {
     return file;
 }
 
-function uploadFile(bucket: string, key: string, file: fileUpload.UploadedFile){
-    fs.readFile(file.data, (err, data) => {
+function uploadFile(bucket: string, key: string, path: string){
+    fs.readFile(path, (err, data) => {
         if(err) {
             throw err;
         }
