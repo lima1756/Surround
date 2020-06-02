@@ -78,7 +78,7 @@ class MusicController {
     }
 
     @Post('')
-    private addSong(req: Request, res: Response){
+    private async addSong(req: Request, res: Response){
         if(!req.files && req.files!.song && req.files!.img){
             res.sendStatus(BAD_REQUEST);
         }
@@ -92,8 +92,8 @@ class MusicController {
             imgFile: songId+"_"+imgFile.name,
             songFile: songId+"_"+songFile.name
         })
-        imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
-        songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
+        await imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
+        await songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
         uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, path.join(__dirname, '../../../public/songs', song.songFile));
         uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, path.join(__dirname, '../../../public/images', song.imgFile));
         song.save();
