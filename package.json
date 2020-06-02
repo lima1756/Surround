@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc --sourceMap false",
     "start:dev": "nodemon --config \"./util/nodemon.json\"/",
-    "start": "npm run build && node ./build/start",
+    "start": "node ./build/start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
