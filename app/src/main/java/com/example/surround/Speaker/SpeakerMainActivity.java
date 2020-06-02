@@ -71,6 +71,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
                 SpeakerMainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         Toast.makeText(getApplicationContext(),"Selected Room doesn't exist", Toast.LENGTH_LONG ).show();
                         initialView();
                         etName.setText(SpeakerMainActivity.this.name);
