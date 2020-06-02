@@ -4,11 +4,14 @@
     <string name="speaker_description">Play music</string>
     <string name="controller">Controller</string>
     <string name="controller_description">Select a song</string>
-    <string name="login_speaker_token">Insert your\nsession token</string>
-    <string name="login_speaker_name">Insert your\nnickname</string>
+    <string name="login_speaker_token">Session token</string>
+    <string name="login_speaker_name">Your nickname</string>
     <string name="et_speaker_hint">Token</string>
+    <string name="btn_speaker_connect">Enter</string>
+    <string name="room">Room:</string>
     <string name="controller_instrucctions">TODO</string>
     <string name="lorem_short">Lorem Ipsum</string>
+    <string name="lorem_xs">LOREM</string>
     <string name="hint_insert_name">Insert a cool nickname</string>
     <string name="wait_controller_1">Room: </string>
     <string name="wait_controller_2">Waiting for the controller</string>

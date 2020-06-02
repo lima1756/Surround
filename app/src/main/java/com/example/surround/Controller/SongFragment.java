@@ -43,7 +43,6 @@ public class SongFragment extends Fragment implements SongListener {
     private Song currentSong;
     private ImageView songIcon, playBtn, prevBtn, nextBtn;
     private TextView songTitle, songArtist, songDuration, songTimeElapsed;
-    private MediaPlayer mediaPlayer;
     private SeekBar sbSongPlaying;
     private boolean isPlaying = false;
     private ControllerSocket app;

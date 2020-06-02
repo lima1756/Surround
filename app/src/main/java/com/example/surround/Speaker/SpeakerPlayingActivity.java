@@ -287,6 +287,8 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         if(mp != null)mp.stop();
         isPlaying = false;
         isReady = false;
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
     }
 
     public void onSetMusic(String id){

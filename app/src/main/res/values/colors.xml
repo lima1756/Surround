@@ -9,5 +9,6 @@
     <color name="colorSecondaryDark">#121212</color>
     <color name="colorSecondaryMid">#282828</color>
     <color name="colorSecondaryLight">#666666</color>
+    <color name="black">#000</color>
 
 </resources>
