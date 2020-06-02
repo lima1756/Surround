@@ -7,6 +7,7 @@ import Song, {ISong, SongHelper} from '../../models/Song.model';
 import AWS from 'aws-sdk';
 import { PutObjectRequest, GetObjectRequest } from 'aws-sdk/clients/s3';
 import {fs} from 'memfs';
+import { Logger } from '@overnightjs/logger';
 require('dotenv').config()
 AWS.config.update({
     region: 'us-west-1',
@@ -52,12 +53,14 @@ class MusicController {
         try {            
             const song = await SongHelper.findById(req.params.id);
             const exists = fs.existsSync(path.join(__dirname, '../../../public/songs', song!.songFile));
+            Logger.Info(exists);
             if(exists){
                 res.sendFile(path.join(__dirname, '../../../public/songs', song!.songFile));            
                 return;
             }
             (await downloadFile(process.env.AWS_BUCKET || "", "public/songs/"+song!.songFile)).pipe(res);
         } catch (err) {
+            Logger.Err(err);
             res.sendStatus(BAD_REQUEST);
         }
     }
@@ -73,6 +76,7 @@ class MusicController {
             }
             (await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile)).pipe(res);
         } catch (err) {
+            Logger.Err(err);
             res.sendStatus(BAD_REQUEST);
         }
     }
@@ -94,13 +98,9 @@ class MusicController {
         })
         await imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
         await songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
-        if(fs.existsSync(path.join(__dirname, '../../../public/songs', song.songFile))){
-            console.log("FILE EXISTS");
-        }
-        uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, path.join(__dirname, '../../../public/songs', song.songFile));
-        uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, path.join(__dirname, '../../../public/images', song.imgFile));
+        uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, imgFile.data);    
+        uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, songFile.data);
         song.save();
-        
         res.send({
             "id": songId
         });
@@ -115,31 +115,25 @@ async function downloadFile(Bucket: string, Key: string) {
     const result = await S3
     .getObject(request)
     .promise();
-
-    fs.writeFileSync(`../../../${Key}`, result.Body as any);
+    fs.writeFileSync(path.join(__dirname, `../../../${Key}`), result.Body as any);
     const file = await fs.createReadStream(`/${Key}`);
     return file;
 }
 
-function uploadFile(bucket: string, key: string, path: string){
-    fs.readFile(path, (err, data) => {
-        if(err) {
-            throw err;
+function uploadFile(bucket: string, key: string, data: Buffer){
+    const songParams : PutObjectRequest = {
+        Bucket: bucket,
+        Body : data,
+        Key : key
+    };
+    S3.upload(songParams, function (err, data) {
+        if (err) {
+            console.log("Error", err);
         }
-        const songParams : PutObjectRequest = {
-            Bucket: bucket,
-            Body : data,
-            Key : key
-        };
-        S3.upload(songParams, function (err, data) {
-            if (err) {
-                console.log("Error", err);
-            }
-            if (data) {
-                console.log("Uploaded in:", data.Location);
-            }
-        });
-    })
+        if (data) {
+            console.log("Uploaded in:", data.Location);
+        }
+    });
 }
 
 export default MusicController;
