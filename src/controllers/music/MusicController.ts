@@ -1,4 +1,4 @@
-import { OK, BAD_REQUEST } from 'http-status-codes';
+import { OK, BAD_REQUEST, NOT_IMPLEMENTED } from 'http-status-codes';
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import fileUpload from 'express-fileupload';
@@ -92,34 +92,9 @@ class MusicController {
             imgFile: songId+"_"+imgFile.name,
             songFile: songId+"_"+songFile.name
         })
+        uploadFile(process.env.AWS_BUCKET  || "", "public/songs/"+song.songFile, songFile);
+        uploadFile(process.env.AWS_BUCKET  || "", "public/images/"+song.imgFile, imgFile);
         song.save();
-        const imgParams : PutObjectRequest = {
-            Bucket: process.env.AWS_BUCKET || "",
-            Body : imgFile,
-            Key : "public/images/"+song.imgFile
-        };
-        const songParams : PutObjectRequest = {
-            Bucket: process.env.AWS_BUCKET  || "",
-            Body : songFile,
-            Key : "public/songs/"+song.songFile
-        };
-
-        S3.upload(imgParams, function (err, data) {
-            if (err) {
-                console.log("Error", err);
-            }            
-            if (data) {
-                console.log("Uploaded in:", data.Location);
-            }
-        });
-        S3.upload(songParams, function (err, data) {
-            if (err) {
-                console.log("Error", err);
-            }
-            if (data) {
-                console.log("Uploaded in:", data.Location);
-            }
-        });
         // imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
         // songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
         res.send({
@@ -140,6 +115,27 @@ async function downloadFile(Bucket: string, Key: string) {
     fs.writeFileSync(`../../../${Key}`, result.Body as any);
     const file = await fs.createReadStream(`/${Key}`);
     return file;
+}
+
+function uploadFile(bucket: string, key: string, file: fileUpload.UploadedFile){
+    fs.readFile(file.tempFilePath, (err, data) => {
+        if(err) {
+            throw err;
+        }
+        const songParams : PutObjectRequest = {
+            Bucket: bucket,
+            Body : data,
+            Key : key
+        };
+        S3.upload(songParams, function (err, data) {
+            if (err) {
+                console.log("Error", err);
+            }
+            if (data) {
+                console.log("Uploaded in:", data.Location);
+            }
+        });
+    })
 }
 
 export default MusicController;
