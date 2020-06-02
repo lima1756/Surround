@@ -118,7 +118,7 @@ async function downloadFile(Bucket: string, Key: string) {
 }
 
 function uploadFile(bucket: string, key: string, file: fileUpload.UploadedFile){
-    fs.readFile(file.tempFilePath, (err, data) => {
+    fs.readFile(file.data, (err, data) => {
         if(err) {
             throw err;
         }
