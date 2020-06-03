@@ -59,8 +59,10 @@ class MusicController {
                 return;
             }
             const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
-            if(!file)
+            if(file)
                 file!.pipe(res);
+            else
+                res.sendStatus(NOT_FOUND);
             res.sendStatus(NOT_FOUND);
         } catch (err) {
             Logger.Err(err);
