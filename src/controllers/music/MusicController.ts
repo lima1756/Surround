@@ -13,7 +13,10 @@ require('dotenv').config()
 AWS.config.update({
     region: 'us-west-1',
     accessKeyId: process.env.AWSAccessKeyId,
-    secretAccessKey: process.env.AWSSecretKey
+    secretAccessKey: process.env.AWSSecretKey,
+    httpOptions: {
+        timeout: 60*60*1000 // 1 hour timeout
+    }
 });
 const S3 = new AWS.S3();
 
