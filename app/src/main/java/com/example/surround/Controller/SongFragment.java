@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 /**
@@ -139,18 +140,6 @@ public class SongFragment extends Fragment implements SongListener {
         songTitle.setText(currentSong.getTitle());
         songArtist.setText(currentSong.getArtist());
         songDuration.setText(toMinutes(currentSong.getDuration()));
-        updateTime();
-    }
-
-    private void updateTime(){
-        MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-        Log.d("URI", Uri.parse(Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + currentSong.getId()).toString());
-        mRetriever.setDataSource(Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + currentSong.getId(), new HashMap<String, String>());
-        String s = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        int minutes = (int)Math.floor(Long.parseLong(s)/60000.0);
-        int seconds = (int)Math.floor(Long.parseLong(s)/1000)-(minutes*60);
-        songDuration.setText(minutes+":"+seconds);
-        mRetriever.release();
     }
 
 
@@ -182,7 +171,7 @@ public class SongFragment extends Fragment implements SongListener {
 
         if(seconds < 10) return minutes+":0"+seconds;
 
-        return minutes+":"+seconds;
+        return String.format(Locale.getDefault(),"%02d:%02d", minutes, seconds);
     }
 
 

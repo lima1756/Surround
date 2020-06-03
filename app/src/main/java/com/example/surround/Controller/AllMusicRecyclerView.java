@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerView.ViewHolder> {
 
@@ -56,17 +57,9 @@ public class AllMusicRecyclerView extends RecyclerView.Adapter<AllMusicRecyclerV
                 .into(holder.imgv);
         holder.titTV.setText(songs.get(position).getTitle());
         holder.artTV.setText(songs.get(position).getArtist());
-
-        // retrieving song time
-        MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-        mRetriever.setDataSource(Constants.SERVER_URL + Constants.SERVER_GET_MUSIC_URL + songs.get(position).getId(), new HashMap<String, String>());
-        String s = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        int minutes = (int)Math.floor(Long.parseLong(s)/60000.0);
-        int seconds = (int)Math.floor(Long.parseLong(s)/1000)-(minutes*60);
-        mRetriever.release();
-
-        holder.durTV.setText(minutes+":"+seconds);
-
+        int minutes = songs.get(position).getDuration()/60;
+        int seconds = songs.get(position).getDuration()%60;
+        holder.durTV.setText(String.format(Locale.getDefault(),"%02d:%02d", minutes, seconds));
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
