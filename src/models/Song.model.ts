@@ -5,7 +5,8 @@ export const SongSchema = new mongoose.Schema({
     name: String,
     artist: String,
     imgFile: String,
-    songFile: String
+    songFile: String,
+    duration: Number
 })
 
 export interface ISong extends Document {
@@ -13,7 +14,8 @@ export interface ISong extends Document {
     name: string,
     artist: string,
     imgFile: string,
-    songFile: string
+    songFile: string,
+    duration: number
 }
 
 const model = mongoose.model<ISong>('Song', SongSchema);;

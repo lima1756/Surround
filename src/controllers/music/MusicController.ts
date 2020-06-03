@@ -8,6 +8,7 @@ import AWS from 'aws-sdk';
 import { PutObjectRequest, GetObjectRequest } from 'aws-sdk/clients/s3';
 import {fs} from 'memfs';
 import { Logger } from '@overnightjs/logger';
+import getMP3Duration from 'get-mp3-duration';
 require('dotenv').config()
 AWS.config.update({
     region: 'us-west-1',
@@ -41,6 +42,7 @@ class MusicController {
                 id: song!.id,
                 name: song!.name,
                 artist: song!.artist,
+                duration: song!.duration
             })            
         } catch (err) {
             console.log(err);
@@ -89,12 +91,14 @@ class MusicController {
         const songFile = req.files!.song as fileUpload.UploadedFile;
         const imgFile = req.files!.img as fileUpload.UploadedFile;
         let songId = Date.now()+"";
+        Logger.Info("duration: " + getMP3Duration(songFile.data));
         const song: ISong = new Song({
             id: songId,
             name: req.body.name,
             artist: req.body.artist,
             imgFile: songId+"_"+imgFile.name,
-            songFile: songId+"_"+songFile.name
+            songFile: songId+"_"+songFile.name,
+            duration: getMP3Duration(songFile.data)
         })
         await imgFile.mv(path.join(__dirname, '../../../public/images', song.imgFile));
         await songFile.mv(path.join(__dirname, '../../../public/songs', song.songFile));
