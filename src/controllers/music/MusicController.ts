@@ -58,12 +58,7 @@ class MusicController {
                 res.sendFile(path.join(__dirname, '../../../public/songs', song!.songFile));            
                 return;
             }
-            const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
-            if(file)
-                file!.pipe(res);
-            else
-                res.sendStatus(NOT_FOUND);
-            res.sendStatus(NOT_FOUND);
+            await downloadFile(process.env.AWS_BUCKET || "", "public/songs/"+song!.songFile, res);
         } catch (err) {
             Logger.Err(err);
             res.sendStatus(NOT_FOUND);
@@ -79,11 +74,7 @@ class MusicController {
                 res.sendFile(path.join(__dirname, '../../../public/images', song!.imgFile));    
                 return;
             }
-            const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
-            if(file)
-                file!.pipe(res);
-            else
-                res.sendStatus(NOT_FOUND);
+            downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile, res);
         } catch (err) {
             Logger.Err(err);
             res.sendStatus(BAD_REQUEST);
@@ -116,18 +107,14 @@ class MusicController {
     }
 }
 
-async function downloadFile(Bucket: string, Key: string) {
+async function downloadFile(Bucket: string, Key: string, res: Response) {
     const request : GetObjectRequest = {
         Bucket: Bucket,
         Key: Key
     };
-    try{
-        const result = await S3.getObject(request);
-        return result.createReadStream();
-    } catch(ex) {
-        console.log("file not found", ex);
-        return null;
-    }
+    const stream = S3.getObject(request).createReadStream();
+    stream.on('error', (err)=>{Logger.Err(err); res.sendStatus(NOT_FOUND)})
+    stream.pipe(res);
 }
 
 function uploadFile(bucket: string, key: string, data: Buffer){
