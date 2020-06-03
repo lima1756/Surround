@@ -1,4 +1,4 @@
-import { OK, BAD_REQUEST, NOT_IMPLEMENTED } from 'http-status-codes';
+import { OK, BAD_REQUEST, NOT_FOUND } from 'http-status-codes';
 import { Controller, Get, Post } from '@overnightjs/core';
 import { Request, Response } from 'express';
 import fileUpload from 'express-fileupload';
@@ -58,10 +58,13 @@ class MusicController {
                 res.sendFile(path.join(__dirname, '../../../public/songs', song!.songFile));            
                 return;
             }
-            (await downloadFile(process.env.AWS_BUCKET || "", "public/songs/"+song!.songFile)).pipe(res);
+            const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
+            if(!file)
+                file!.pipe(res);
+            res.sendStatus(NOT_FOUND);
         } catch (err) {
             Logger.Err(err);
-            res.sendStatus(BAD_REQUEST);
+            res.sendStatus(NOT_FOUND);
         }
     }
 
@@ -74,7 +77,10 @@ class MusicController {
                 res.sendFile(path.join(__dirname, '../../../public/images', song!.imgFile));    
                 return;
             }
-            (await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile)).pipe(res);
+            const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
+            if(!file)
+                file!.pipe(res);
+            res.sendStatus(NOT_FOUND);
         } catch (err) {
             Logger.Err(err);
             res.sendStatus(BAD_REQUEST);
@@ -112,9 +118,13 @@ async function downloadFile(Bucket: string, Key: string) {
         Bucket: Bucket,
         Key: Key
     };
-    const result = await S3
-    .getObject(request);
-    return result.createReadStream();
+    try{
+        const result = await S3.getObject(request);
+        return result.createReadStream();
+    } catch(ex) {
+        console.log("file not found", ex);
+    }
+    return null;
 }
 
 function uploadFile(bucket: string, key: string, data: Buffer){
