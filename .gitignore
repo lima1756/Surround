@@ -3,7 +3,6 @@ public/*
 public/images/*
 !public/songs/song.mp3
 !public/images/nothing.md
-!public/songs
 !public/images
 build
 .env
