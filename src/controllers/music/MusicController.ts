@@ -78,7 +78,7 @@ class MusicController {
                 return;
             }
             const file = await downloadFile(process.env.AWS_BUCKET || "", "public/images/"+song!.imgFile);
-            if(!file)
+            if(file)
                 file!.pipe(res);
             res.sendStatus(NOT_FOUND);
         } catch (err) {
@@ -123,8 +123,8 @@ async function downloadFile(Bucket: string, Key: string) {
         return result.createReadStream();
     } catch(ex) {
         console.log("file not found", ex);
+        return null;
     }
-    return null;
 }
 
 function uploadFile(bucket: string, key: string, data: Buffer){
