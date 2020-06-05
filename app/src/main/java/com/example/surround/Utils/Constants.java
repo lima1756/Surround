@@ -6,8 +6,10 @@ public class Constants {
     public static final String SERVER_GET_ALL_MUSIC = "/api/music/all";
     public static final String SERVER_GET_MUSIC_URL ="/api/music/song/";
 
+    /* NO USED, APPARENTLY THIS SEEKBAR IS NOT NORMALIZED
     //SEEKBAR CONSTANTS, USED BY BOTH SIDES
     public static final int MAX_PROGRESS_SEEKBAR = 1000;
+     */
     //                      Min  progress seekbar value is 0 by default. resetting it would be a problem.
     public static final int EQUALIZER_SUBWOOFER_SPEAKER =3;
     public static final int EQUALIZER_CENTER_SPEAKER =2;

@@ -173,7 +173,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         public void call(Object... args) {
             Intent i = new Intent(SpeakerPlayingActivity.this, MainActivity.class);
             startActivity(i);
-            Toast.makeText(getApplicationContext(),"Connection was lost.",Toast.LENGTH_LONG);
+            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),"Connection was lost.",Toast.LENGTH_LONG);
+                }
+            });
+
         }
     };
 
@@ -355,7 +361,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 long now;
                 Log.d("ZZZ", "ABOUT TO PLAY THE SONG");
                 while(!done){
-                    now = System.currentTimeMillis() ; //TODO agregar factor de correccion según server?
+                    now = System.currentTimeMillis() ; //TOD-O agregar factor de correccion según server? (parece que no)
                     if(SpeakerPlayingActivity.this.lastTimestamp <= now ){
                         mp.seekTo(SpeakerPlayingActivity.this.lastMillis);
                         mp.start();

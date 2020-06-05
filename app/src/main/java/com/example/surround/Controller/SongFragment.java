@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.surround.Controller.Utils.ControllerSocket;
 import com.example.surround.Controller.Utils.SongListener;
+import com.example.surround.Speaker.SpeakerPlayingActivity;
 import com.example.surround.Utils.Constants;
 import com.example.surround.Utils.Song;
 import com.example.surround.R;
@@ -48,9 +49,13 @@ public class SongFragment extends Fragment implements SongListener {
     private boolean isPlaying = false;
     private ControllerSocket app;
     private int playEmitterErrorCounter = 0;
-    private int milisSong;
+    private int secondsSong;
     private ArrayList<Song> songs;
     private int currentSongIndex;
+    public static final int SLEEP_TIME = 500; //milliseconds.
+    Thread threadPlaySong;
+    private volatile boolean threadPlaySongIsBeenUsed;
+    int lastMilis;
 
     SongFragment(Song song) { this.currentSong = song; }
 
@@ -71,7 +76,15 @@ public class SongFragment extends Fragment implements SongListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setLayoutComponents(view);
+        app.getSocket().on(Constants.SOCKET_ON_PLAY_START, socketOnControllerPlayStart);
+        app.getSocket().on(Constants.SOCKET_ON_PLAY_MUSIC_RESPONSE, socketOnPlayResponse);
+        app.getSocket().on(Constants.SOCKET_ON_SPEAKER_CONNECTED, socketOnSpeakerConnected);
+        app.getSocket().on(Constants.SOCKET_ON_STOP_MUSIC_RESPONSE,socketOnStopResponse);
+        app.getSocket().connect();
+
         songs = ((ControllerActivity)getActivity()).getSongs();
+
         if(songs.size() == 0){
             ((ControllerActivity)getActivity()).retrieveMusic(this);
         }
@@ -79,36 +92,27 @@ public class SongFragment extends Fragment implements SongListener {
             if(songs.get(i).getId().equals(currentSong.getId()))
             {
                 this.currentSongIndex = i;
+
                 break;
             }
         }
-
-        setLayoutComponents(view);
-
-        app.getSocket().on(Constants.SOCKET_ON_PLAY_START, socketOnControllerPlayStart);
-        app.getSocket().on(Constants.SOCKET_ON_PLAY_MUSIC_RESPONSE, socketOnPlayResponse);
-
-        app.getSocket().on(Constants.SOCKET_ON_STOP_MUSIC_RESPONSE,socketOnStopResponse);
-        app.getSocket().connect();
-
+        sbSongPlaying.setMax(currentSong.getDuration());
+        sbSongPlaying.setProgress(0);
         updateSongMedia();
 
-        emmitPlay(0);
+        emmitPlay(lastMilis);
+
         isPlaying = true;
         playBtn.setImageResource( R.drawable.ic_pause_circle);
 
 
-        //Setting Listeners
-        playBtn.setOnClickListener(playListener);
-        sbSongPlaying.setMax(Constants.MAX_PROGRESS_SEEKBAR);
-        sbSongPlaying.setOnSeekBarChangeListener(seekBarListener);
+
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentSongIndex = (currentSongIndex+1) % songs.size();
-                currentSong = songs.get(currentSongIndex);
-                updateSongMedia();
+                setNewSong();
                 emmitPause();
                 emmitPlay(0);
                 playBtn.setImageResource( R.drawable.ic_pause_circle);
@@ -119,15 +123,22 @@ public class SongFragment extends Fragment implements SongListener {
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentSongIndex = (currentSongIndex-1) % songs.size();
-                currentSong = songs.get(currentSongIndex);
-                updateSongMedia();
+                currentSongIndex = (currentSongIndex-1+songs.size()) % songs.size();
+                setNewSong();
                 emmitPause();
                 emmitPlay(0);
                 playBtn.setImageResource( R.drawable.ic_pause_circle);
                 isPlaying = true;
             }
         });
+   }
+
+   private void setNewSong(){
+       currentSong = songs.get(currentSongIndex);
+       sbSongPlaying.setMax(currentSong.getDuration());
+       sbSongPlaying.setProgress(0);
+       songTimeElapsed.setText(toMinutes(0));
+       updateSongMedia();
    }
 
 
@@ -149,29 +160,58 @@ public class SongFragment extends Fragment implements SongListener {
        songArtist = view.findViewById(R.id.songArtistTV);
        songDuration = view.findViewById(R.id.durationTV);
        songTimeElapsed = view.findViewById(R.id.timeElapsedTV);
+
        sbSongPlaying = view.findViewById(R.id.songSB);
+       sbSongPlaying.setOnSeekBarChangeListener(seekBarListener);
 
        prevBtn = view.findViewById(R.id.prevIV);
        nextBtn = view.findViewById(R.id.nextIV);
+
        playBtn = view.findViewById(R.id.playIV);
+       playBtn.setOnClickListener(playListener);
 
        songTimeElapsed.setVisibility(View.VISIBLE);
    }
 
+    private String toMinutes(int songSeconds){
 
-    private void updateMillisSong() {
-        if (sbSongPlaying == null) return;
-        milisSong = (currentSong.getDuration() * sbSongPlaying.getProgress()) / Constants.MAX_PROGRESS_SEEKBAR;
-    }
-
-    private String toMinutes(int songDuration){
-
-        int minutes = songDuration/60;
-        int seconds = songDuration%60;
+        int minutes = songSeconds/60;
+        int seconds = songSeconds%60;
 
         if(seconds < 10) return minutes+":0"+seconds;
 
         return String.format(Locale.getDefault(),"%02d:%02d", minutes, seconds);
+    }
+
+    public void onPlayInMillisecond(final long timestamp, final int millis) {
+        threadPlaySong = new Thread(){
+            public void run(){
+                threadPlaySongIsBeenUsed = true;
+                int  progressBar = 0;
+                long now;
+                Log.d("ZZZ", "ABOUT TO PLAY THE SONG");
+                while(progressBar < (sbSongPlaying.getMax()-1) && threadPlaySongIsBeenUsed){
+                    now = System.currentTimeMillis() ; //TODO agregar factor de correccion según server?
+                    if(timestamp <= now ){
+                        progressBar = (((int)(now - timestamp)) + millis)/1000;
+                        final int finalProgressBar = progressBar;
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                songTimeElapsed.setText(toMinutes(finalProgressBar));
+                                sbSongPlaying.setProgress(finalProgressBar);
+                            }
+                        });
+                    }
+                    try {
+                        Thread.sleep(SLEEP_TIME); // waiting to play sync.
+                    }catch (Exception e){
+                        //TODO que agregar aqui?
+                    }
+                }
+            }
+        };
+        threadPlaySong.start();
     }
 
 
@@ -184,8 +224,8 @@ public class SongFragment extends Fragment implements SongListener {
                 playBtn.setImageResource(R.drawable.ic_play_circle);
             }
             else {
-                updateMillisSong();
-                emmitPlay(milisSong);
+                secondsSong =  sbSongPlaying.getProgress() ;
+                emmitPlay(secondsSong*1000);
                 playBtn.setImageResource( R.drawable.ic_pause_circle);
             }
             isPlaying = !isPlaying;
@@ -196,11 +236,9 @@ public class SongFragment extends Fragment implements SongListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(!fromUser) return;
+            threadPlaySongIsBeenUsed = false; // Stops the SB playing song thread.
             songTimeElapsed.setText(toMinutes(progress));
-            updateMillisSong();
-            if(isPlaying){
-                emmitPlay(milisSong);
-            }
+            secondsSong = progress;
         }
 
         @Override
@@ -210,7 +248,10 @@ public class SongFragment extends Fragment implements SongListener {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            //TODO(alex) is it necessary something here?
+            if(isPlaying){
+                emmitPause();
+                emmitPlay(secondsSong*1000);
+            }
         }
     };
 
@@ -272,19 +313,8 @@ public class SongFragment extends Fragment implements SongListener {
             JSONObject data = (JSONObject) args[0];
             Log.e("SONG_FRAGMENT" ,data.toString());
             try {
-                final long timeToStartSeek = data.getLong("timestamp");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            long wait = timeToStartSeek-System.currentTimeMillis();
-                            Thread.sleep(wait);
-                            // TODO(alex): iniciar seekbar para que avance
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                final long timestamp = data.getLong("timestamp");
+                SongFragment.this.onPlayInMillisecond(timestamp,lastMilis);
             }catch (JSONException e){
                 Log.e("SongFragment" ,e.toString());
                 Toast.makeText(getContext(),R.string.error_disconnect_speaker,Toast.LENGTH_LONG).show();
@@ -296,11 +326,12 @@ public class SongFragment extends Fragment implements SongListener {
     //SOCKETS-EMITS ------------------------------------------
 
 
-    private void emmitPlay(final int milis){
+    private void emmitPlay(final int millis){
+        lastMilis = millis;
         JSONObject params= new JSONObject();
         try{
             params.put(Constants.SOCKET_PARAM_SONG_ID,currentSong.getId());
-            params.put(Constants.SOCKET_PARAM_MILLIS_PLAY, milis);
+            params.put(Constants.SOCKET_PARAM_MILLIS_PLAY, millis);
             app.getSocket().emit(Constants.SOCKET_EMIT_PLAY, params);
         }catch (JSONException e){
             Log.e("SONG_FRAGMENT" ,e.toString());
@@ -313,7 +344,7 @@ public class SongFragment extends Fragment implements SongListener {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    emmitPlay(milis);
+                    emmitPlay(millis);
                 }
             }, 1000);
             playEmitterErrorCounter = 0;
@@ -323,6 +354,7 @@ public class SongFragment extends Fragment implements SongListener {
 
 
     private void emmitPause(){
+        threadPlaySongIsBeenUsed = false; // Stops the SB playing song thread.
         app.getSocket().emit(Constants.SOCKET_EMIT_STOP, new JSONObject());
     }
 

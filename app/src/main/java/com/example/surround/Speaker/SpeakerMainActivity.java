@@ -33,7 +33,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             String token ="";
-            token=etToken.getText().toString();
+            token=etToken.getText().toString().toUpperCase();
             Log.d("TOKEN_GET",token);
             if(token.equals("")){
                 Toast.makeText(getApplicationContext(), "Insert a valid token.", Toast.LENGTH_LONG);
