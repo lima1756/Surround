@@ -296,14 +296,19 @@ public class SongFragment extends Fragment implements SongListener {
     private Emitter.Listener socketOnSpeakerConnected = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            JSONObject data = (JSONObject) args[0];
-            try {
-                Toast.makeText(getContext(), "User: " + data.getString("name")+ "Connected", Toast.LENGTH_LONG).show();
+            final JSONObject data = (JSONObject) args[0];
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Toast.makeText(getContext(), "User: " + data.getString("name")+ "Connected", Toast.LENGTH_LONG).show();
+                    }catch (JSONException e) {
+                        Log.e("SongFragment", e.toString());
+                        Toast.makeText(getContext(), R.string.some_user, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
 
-            }catch (JSONException e){
-                Log.e("SongFragment" ,e.toString());
-                Toast.makeText(getContext(),R.string.error_disconnect_speaker,Toast.LENGTH_LONG).show();
-            }
         }
     };
 

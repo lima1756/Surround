@@ -36,7 +36,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
             token=etToken.getText().toString().toUpperCase();
             Log.d("TOKEN_GET",token);
             if(token.equals("")){
-                Toast.makeText(getApplicationContext(), "Insert a valid token.", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), R.string.insert_valid_token, Toast.LENGTH_LONG);
                 return;
             }
             SpeakerMainActivity.this.sessionToken = token;
@@ -46,7 +46,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
             name=etName.getText().toString();
             Log.d("NAME_GET",name);
             if(name.equals("")){
-                Toast.makeText(getApplicationContext(), "Insert a name!.", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), R.string.error_insert_name, Toast.LENGTH_LONG);
                 return;
             }
             etName.setText("");
@@ -72,7 +72,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        Toast.makeText(getApplicationContext(),"Selected Room doesn't exist", Toast.LENGTH_LONG ).show();
+                        Toast.makeText(getApplicationContext(),R.string.error_room_no_exist, Toast.LENGTH_LONG ).show();
                         initialView();
                         etName.setText(SpeakerMainActivity.this.name);
                         etToken.setText("");

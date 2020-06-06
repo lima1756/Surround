@@ -350,12 +350,18 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                 Toast.makeText(this,R.string.error_on_play,Toast.LENGTH_LONG);
                 return;
             }
-            new Handler().postDelayed(new Runnable() {
+            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    onPlayInMillisecond(timestamp, milis);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onPlayInMillisecond(timestamp, milis);
+                        }
+                    }, WAIT_TIME_RESPONSE);
                 }
-            }, WAIT_TIME_RESPONSE);
+            });
+
             playClientErrorCounter[0] = 0;
             return;
         }
@@ -379,7 +385,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
                         threadPlayClientErrorCounter[0]++;
                         if(threadPlayClientErrorCounter[0] == 3)
                         {
-                            Toast.makeText(SpeakerPlayingActivity.this,R.string.error_on_play,Toast.LENGTH_LONG).show();
+                            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(SpeakerPlayingActivity.this,R.string.error_on_play,Toast.LENGTH_LONG).show();
+                                }
+                            });
+
                             return;
                         }
                         new Handler().postDelayed(new Runnable() {
@@ -440,7 +452,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             params.put(Constants.SOCKET_PARAM_READY,true);
             sendServerError(counter, userMessage, socketIOEmit, params);
         } catch (JSONException e) {
-            Toast.makeText(this,R.string.error_no_sended_to_server,Toast.LENGTH_LONG).show();
+            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(SpeakerPlayingActivity.this
+                            , R.string.error_no_sended_to_server, Toast.LENGTH_LONG).show();
+                }
+            });
             return;
         }
         counter[0]++;
@@ -450,7 +468,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         counter[0]++;
         if(counter[0] == 3){
             counter[0] = 0;
-            Toast.makeText(this,R.string.error_connection_generic,Toast.LENGTH_LONG).show();
+            SpeakerPlayingActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(SpeakerPlayingActivity.this
+                            , R.string.error_connection_generic, Toast.LENGTH_LONG).show();
+                }
+            });
             return;
         }
         app.getSocket().emit(socketIOEmit, params);

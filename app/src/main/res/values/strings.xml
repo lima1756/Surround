@@ -23,8 +23,21 @@
     <string name="error_connect_speaker">Error, un usuario no pudo conectarse.</string>
     <string name="error_disconnect_speaker">Error, un usuario no pudo desconectarse</string>
     <string name="error_on_stop_response">Error al enviar Stop. Reintente</string>
+    <string name="some_user">Some User connect</string>
 
     <string name="error_no_sended_to_server">Error al notificar al server. Compruebe su conexión</string>
+    <string name="insert_valid_token">Insert a valid token.</string>
+    <string name="error_insert_name">Insert a name!.</string>
+    <string name="error_room_no_exist">Selected Room doesn\'t exist</string>
+
+    <!-- -->
+    <string name="title">Title</string>
+    <string name="artist">artist</string>
+
+    <string name="insert_name">Your nickname:</string>
+    <string name="create_room">Create Room</string>
+
+    <string name="lorem_time_duration">0:00</string>
 
 
 </resources>
