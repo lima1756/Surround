@@ -42,7 +42,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     String currentSongId, artistSong, nameSong;
     //...............................
 
-    ImageView ivStopBtn, ivDisk, ivWait;
+    ImageView ivStopBtn, ivDisk, ivWait, ivExit;
     Button btnTestStart;
     MediaPlayer mp;
     TextView tvArtist, tvNameSong, tvWait;
@@ -76,6 +76,13 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         public void onClick(View v) {
             v.setVisibility(View.GONE);
             onStopSong();
+        }
+    };
+
+    View.OnClickListener onExitBtn = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 
@@ -246,6 +253,9 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     }
 
     public void setLayoutComponentsInit(){
+        ivExit = findViewById(R.id.iv_exit);
+        ivExit.setVisibility(View.VISIBLE);
+        ivExit.setOnClickListener(onExitBtn);
         //wait
         ivWait = findViewById(R.id.iv_wait);
         ivWait.setVisibility(View.VISIBLE);
@@ -292,8 +302,8 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         if(mp != null)mp.stop();
         isPlaying = false;
         isReady = false;
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+        // i = new Intent(this, MainActivity.class);
+        //startActivity(i);
     }
 
     public void onSetMusic(String id){
@@ -327,11 +337,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.error_on_play,Toast.LENGTH_LONG).show();
         }
     }
-
-    public void onPlay(long timestamp) {
-        onPlayInMillisecond(timestamp, 0);
-    }
-
 
     public void onPlayInMillisecond(final long timestamp, final int milis) {
         this.lastTimestamp = timestamp;
@@ -429,7 +434,6 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
         //--------------------------------
     }
 
-
     private void sendServerError(Integer[] counter, String userMessage, String socketIOEmit){
         JSONObject params= new JSONObject();
         try {
@@ -467,6 +471,7 @@ public class SpeakerPlayingActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         sendDisconnect();
-        super.onBackPressed();
+        Intent i = new Intent(SpeakerPlayingActivity.this, MainActivity.class);
+        startActivity(i);
     }
 }
