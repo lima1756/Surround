@@ -45,7 +45,7 @@ class SocketIOController {
                             {
                                 "name":data.name,
                                 "id":user.getID(),
-                                "type":Equalizer.CENTER_SPEAKER
+                                "type": Math.floor(Math.random() * 8)
                             });
                 }
                 else {
