@@ -6,6 +6,11 @@ public class Constants {
     public static final String SERVER_GET_ALL_MUSIC = "/api/music/all";
     public static final String SERVER_GET_MUSIC_URL ="/api/music/song/";
 
+    /* NO USED, APPARENTLY THIS SEEKBAR IS NOT NORMALIZED
+    //SEEKBAR CONSTANTS, USED BY BOTH SIDES
+    public static final int MAX_PROGRESS_SEEKBAR = 1000;
+     */
+    //                      Min  progress seekbar value is 0 by default. resetting it would be a problem.
     public static final int EQUALIZER_SUBWOOFER_SPEAKER =3;
     public static final int EQUALIZER_CENTER_SPEAKER =2;
     public static final int EQUALIZER_FRONT_LEFT_SPEAKER =0;
@@ -47,6 +52,10 @@ public class Constants {
 
     public static final String SOCKET_ON_STOP_MUSIC_RESPONSE = "stop_response";
     public static final String SOCKET_ON_PLAY_MUSIC_RESPONSE = "play_response";
+    public static final String SOCKET_ON_CONFIGURE_SPEAKER_RESPONSE = "configure_speaker_response";
+    public static final String SOCKET_ON_SPEAKER_DISCONNECTED = "speaker_disconnected";
+    public static final String SOCKET_ON_SPEAKER_CONNECTED = "speaker_connected";
+    public static final String SOCKET_ON_PLAY_START = "play_start";
 
     public static final String SOCKET_PARAM_ROOM = "room";
     public static final String SOCKET_PARAM_OK = "ok";

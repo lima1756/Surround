@@ -4,18 +4,40 @@
     <string name="speaker_description">Play music</string>
     <string name="controller">Controller</string>
     <string name="controller_description">Select a song</string>
-    <string name="login_speaker_token">Insert your\nsession token</string>
-    <string name="login_speaker_name">Insert your\nnickname</string>
+    <string name="login_speaker_token">Session token</string>
+    <string name="login_speaker_name">Your nickname</string>
     <string name="et_speaker_hint">Token</string>
+    <string name="btn_speaker_connect">Enter</string>
+    <string name="room">Room:</string>
     <string name="controller_instrucctions">TODO</string>
     <string name="lorem_short">Lorem Ipsum</string>
+    <string name="lorem_xs">LOREM</string>
     <string name="hint_insert_name">Insert a cool nickname</string>
     <string name="wait_controller_1">Room: </string>
     <string name="wait_controller_2">Waiting for the controller</string>
     <string name="wait_connection">Connecting . . .</string>
 
+    <!-- Mensajes de error -->
+    <string name="error_on_play">Error al reproducir canción</string>
+    <string name="error_connection_generic">Error al intentar conectarse. Reintente</string>
+    <string name="error_connect_speaker">Error, un usuario no pudo conectarse.</string>
+    <string name="error_disconnect_speaker">Error, un usuario no pudo desconectarse</string>
+    <string name="error_on_stop_response">Error al enviar Stop. Reintente</string>
+    <string name="some_user">Some User connect</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_no_sended_to_server">Error al notificar al server. Compruebe su conexión</string>
+    <string name="insert_valid_token">Insert a valid token.</string>
+    <string name="error_insert_name">Insert a name!.</string>
+    <string name="error_room_no_exist">Selected Room doesn\'t exist</string>
+
+    <!-- -->
+    <string name="title">Title</string>
+    <string name="artist">artist</string>
+
+    <string name="insert_name">Your nickname:</string>
+    <string name="create_room">Create Room</string>
+
+    <string name="lorem_time_duration">0:00</string>
+
 
 </resources>

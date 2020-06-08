@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,54 +27,32 @@ public class SpeakerMainActivity extends AppCompatActivity {
     TextView tvName, tvToken, tvConnecting;
     SpeakerSocket app;
     String sessionToken, name;
+    Button btnConnect;
 
-    TextView.OnEditorActionListener  onEnterToken = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_SEND)) {
-                //do what you want on the press of 'done'
-                return onEnterPressedToken();
+    View.OnClickListener onEnter = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String token ="";
+            token=etToken.getText().toString().toUpperCase();
+            Log.d("TOKEN_GET",token);
+            if(token.equals("")){
+                Toast.makeText(getApplicationContext(), R.string.insert_valid_token, Toast.LENGTH_LONG);
+                return;
             }
-            return false;
+            SpeakerMainActivity.this.sessionToken = token;
+            etToken.setText("");
+
+            String name ="";
+            name=etName.getText().toString();
+            Log.d("NAME_GET",name);
+            if(name.equals("")){
+                Toast.makeText(getApplicationContext(), R.string.error_insert_name, Toast.LENGTH_LONG);
+                return;
+            }
+            etName.setText("");
+            logIn(name);
         }
     };
-
-    TextView.OnEditorActionListener  onEnterName = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_SEND)) {
-                //do what you want on the press of 'done'
-                return onEnterPressedName();
-            }
-            return false;
-        }
-    };
-
-
-    public boolean onEnterPressedToken(){
-        String token ="";
-        token=etToken.getText().toString();
-        Log.d("TOKEN_GET",token);
-        if(token.equals("")){
-            Toast.makeText(getApplicationContext(), "Insert a valid token.", Toast.LENGTH_LONG);
-            return false;
-        }
-        SpeakerMainActivity.this.sessionToken = token;
-        etToken.setText("");
-        changeView();
-        return true;
-    }
-
-    public boolean onEnterPressedName(){
-        String name ="";
-        name=etName.getText().toString();
-        Log.d("NAME_GET",name);
-        if(name.equals("")){
-            Toast.makeText(getApplicationContext(), "Insert a name!.", Toast.LENGTH_LONG);
-            return false;
-        }
-        etName.setText("");
-        logIn(name);
-        return true;
-    }
 
     private Emitter.Listener socketOnLogin = new Emitter.Listener() {
         @Override
@@ -89,6 +68,17 @@ public class SpeakerMainActivity extends AppCompatActivity {
                 app.setTypeOfSpeaker(typeOfSpeaker);
             } catch (JSONException e) {
                 Log.d("LOGIN", "login failed ");
+                SpeakerMainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(),R.string.error_room_no_exist, Toast.LENGTH_LONG ).show();
+                        initialView();
+                        etName.setText(SpeakerMainActivity.this.name);
+                        etToken.setText("");
+                    }
+                });
+
                 return;
             }
 
@@ -111,46 +101,55 @@ public class SpeakerMainActivity extends AppCompatActivity {
 
     public void setComponents(){
         tvConnecting = findViewById(R.id.tv_connecting);
-        tvConnecting.setVisibility(View.GONE);
 
         etToken = findViewById(R.id.et_token);
-        etToken.setOnEditorActionListener(onEnterToken);
-        etToken.setVisibility(View.VISIBLE);
-
         etName = findViewById(R.id.et_name);
-        etName.setVisibility(View.GONE);
-        etName.setOnEditorActionListener(onEnterName);
 
         tvName = findViewById(R.id.tv_insert_name);
-        tvName.setVisibility(View.GONE);
-
         tvToken = findViewById(R.id.tv_insert_token);
-        tvToken.setVisibility(View.VISIBLE);
+
+        btnConnect = findViewById(R.id.btn_enter_room);
+        btnConnect.setOnClickListener(onEnter);
+        initialView();
     }
 
-    private void changeView(){
-
-        etToken.setVisibility(View.GONE);
-        etName.setVisibility(View.VISIBLE);
-        tvName.setVisibility(View.VISIBLE);
-        tvToken.setVisibility(View.GONE);
+    private void initialView(){
         tvConnecting.setVisibility(View.GONE);
+
+        etToken.setVisibility(View.VISIBLE);
+        etName.setVisibility(View.VISIBLE);
+
+        tvName.setVisibility(View.VISIBLE);
+        tvToken.setVisibility(View.VISIBLE);
+
+        btnConnect.setVisibility(View.VISIBLE);
     }
 
     private void waitingView(){
         tvConnecting.setVisibility(View.VISIBLE);
+
         etToken.setVisibility(View.GONE);
         etName.setVisibility(View.GONE);
+
         tvName.setVisibility(View.GONE);
         tvToken.setVisibility(View.GONE);
+
+        btnConnect.setVisibility(View.GONE);
     }
 
     private void logIn(String name){
         waitingView();
-        if(sessionToken==null) return;
-        if(sessionToken.equals("")) return;
-        if(name==null) return;
-        if(name.equals("")) return;
+        if(sessionToken==null || name==null) {
+            Toast.makeText(getApplicationContext(), "Error inserting values", Toast.LENGTH_LONG);
+            initialView();
+            return;
+        }
+        if(sessionToken.equals("") || name.equals("")){
+            Toast.makeText(getApplicationContext(), "Error inserting values", Toast.LENGTH_LONG);
+            initialView();
+            return;
+        }
+
         this.name = name;
         JSONObject jsonObject = new JSONObject();
         Log.d("SOCKET",""+app.getSocket().toString());
@@ -158,6 +157,7 @@ public class SpeakerMainActivity extends AppCompatActivity {
             Log.d("TOKEN_SEND","name: "+name +" token: "+sessionToken);
             jsonObject.put(Constants.SOCKET_PARAM_TOKEN, sessionToken);
             jsonObject.put(Constants.SOCKET_PARAM_NAME, name);
+
             app.getSocket().emit(Constants.SOCKET_EMIT_LOGIN_SPEAKER, jsonObject);
         }catch (JSONException e){
             Toast.makeText(getApplicationContext(), "Error while sending token and name.", Toast.LENGTH_LONG);

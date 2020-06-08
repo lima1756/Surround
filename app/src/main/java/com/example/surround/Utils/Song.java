@@ -2,6 +2,7 @@ package com.example.surround.Utils;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,9 +47,9 @@ public class Song implements Parcelable {
 
     public static final Song CreateFromJSON(JSONObject jsonSong) throws JSONException {
         Song s = new Song();
-        s.imageRes = jsonSong.has("image")? jsonSong.getString("image"): "";
-        s.duration = jsonSong.has("duration")? jsonSong.getInt("duration"): 100;
+        s.duration = jsonSong.has("duration")? jsonSong.getInt("duration")/1000: 100;
         s.id = jsonSong.getString("id");
+        s.imageRes = "https://surround-music.herokuapp.com/api/music/image/" + s.id;
         s.title = jsonSong.getString("name");
         s.artist = jsonSong.getString("artist");
         return s;

@@ -13,12 +13,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
-        android:text="Title"
+        android:text="@string/title"
         android:textColor="@color/colorTitle"
         android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/songArtistTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/songImageIV" />
@@ -27,35 +27,41 @@
         android:id="@+id/playIV"
         android:layout_width="112dp"
         android:layout_height="89dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp"
         android:src="@drawable/ic_play_circle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/nextIV"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/prevIV"
+        app:layout_constraintTop_toBottomOf="@+id/songSB" />
 
     <SeekBar
         android:id="@+id/songSB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
 
-        android:layout_marginBottom="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:progress="50"
         android:progressBackgroundTint="@color/colorTitle"
         android:thumbTint="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/playIV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/songArtistTV" />
 
     <ImageView
         android:id="@+id/songImageIV"
-        android:layout_width="347dp"
-        android:layout_height="346dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/songTitleTV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,13 +69,13 @@
         android:id="@+id/songArtistTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:gravity="center"
-        android:text="artist"
+        android:text="@string/artist"
         android:textColor="@color/colorSubTitle"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/songSB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/songTitleTV" />
@@ -79,7 +85,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="2:00"
+        android:text="@string/lorem_time_duration"
         android:textColor="@color/colorSubTitle"
         app:layout_constraintEnd_toEndOf="@+id/songSB"
         app:layout_constraintTop_toBottomOf="@+id/songSB" />
@@ -89,7 +95,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="0:00"
+        android:text="@string/lorem_time_duration"
         android:textColor="@color/colorSubTitle"
         app:layout_constraintStart_toStartOf="@+id/songSB"
         app:layout_constraintTop_toBottomOf="@+id/songSB" />
@@ -101,10 +107,9 @@
         android:src="@drawable/ic_skip_previous"
         app:layout_constraintBottom_toBottomOf="@+id/playIV"
         app:layout_constraintEnd_toStartOf="@+id/playIV"
-        app:layout_constraintHorizontal_bias="0.649"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/playIV"
-        app:layout_constraintVertical_bias="0.512" />
+        app:layout_constraintTop_toTopOf="@+id/playIV" />
 
     <ImageView
         android:id="@+id/nextIV"
@@ -113,9 +118,8 @@
         android:src="@drawable/ic_skip_next"
         app:layout_constraintBottom_toBottomOf="@+id/playIV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.351"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playIV"
-        app:layout_constraintTop_toTopOf="@+id/playIV"
-        app:layout_constraintVertical_bias="0.512" />
+        app:layout_constraintTop_toTopOf="@+id/playIV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

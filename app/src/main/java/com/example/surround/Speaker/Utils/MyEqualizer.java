@@ -76,8 +76,6 @@ public class MyEqualizer {
         setBandArr(bandsEq);
         float[] volumeLR = eqVolumes[i];
         mp.setVolume(volumeLR[0], volumeLR[1]);
-        //TODO CHECAR SI SE PUEDE ENVIAR TODO EL VOLUMEN A UNA U OTRA BOCINA ( L A AMBOS LADOS, POR EJEMPLO)
-        //TODO SI NOS ENVIAN PISTA SEPARADA, NO SERÍA NECESARIO MODIFICAR VOLUMENES, SOLO PORNERLOS AL MAXIMO.
 
 
     }

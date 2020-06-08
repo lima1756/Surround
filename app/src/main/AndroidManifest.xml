@@ -18,8 +18,8 @@
         <activity android:name=".Speaker.SpeakerPlayingActivity" />
         <activity android:name=".Speaker.SpeakerMainActivity" />
         <activity android:name=".Controller.ControllerActivity" />
-        <activity android:name=".SplashActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
