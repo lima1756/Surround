@@ -4,5 +4,6 @@ public/images/*
 !public/songs/song.mp3
 !public/images/nothing.md
 !public/images
+!public/songs
 build
 .env
